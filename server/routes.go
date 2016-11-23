@@ -26,12 +26,20 @@ func (s *echoServer) hGetBuild(c echo.Context) error {
 	return c.String(http.StatusInternalServerError, "Not implemented.")
 }
 
-func (s *echoServer) hRouteStage(c echo.Context) error {
+func (s *echoServer) hAddStage(c echo.Context) error {
 	return c.String(http.StatusInternalServerError, "Not implemented.")
 }
 
 func (s *echoServer) hListProjects(c echo.Context) error {
-	return c.String(http.StatusInternalServerError, "Not implemented.")
+	str := ""
+	projects := s.projects.Projects()
+	for _, p := range projects {
+		if len(str) != 0 {
+			str += ", "
+		}
+		str += p.MD5 + "/" + p.URL
+	}
+	return c.String(http.StatusOK, str)
 }
 
 func (s *echoServer) hGetProject(c echo.Context) error {
