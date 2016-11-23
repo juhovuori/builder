@@ -1,6 +1,7 @@
 package server
 
 import (
+	"flag"
 	"log"
 
 	"github.com/mitchellh/cli"
@@ -13,30 +14,35 @@ type Command struct{}
 // usage, a brief few sentences explaining the function of the command,
 // and the complete list of flags the command accepts.
 func (cmd *Command) Help() string {
-	return "builder server <configuration.hcl>"
+	return "builder server [-f <configuration.hcl>]"
 }
 
 // Run runs the actual command with the given CLI instance and
 // command-line arguments. It returns the exit status when it is
 // finished.
 func (cmd *Command) Run(args []string) int {
-	if len(args) != 1 {
-		return cli.RunResultHelp
+	var configFile string
+	cmdFlags := flag.NewFlagSet("server", flag.ContinueOnError)
+	cmdFlags.Usage = func() { log.Println(cmd.Help()) }
+	cmdFlags.StringVar((&configFile), "config-file", "./builder.hcl", "HCL file to read config from")
+
+	if err := cmdFlags.Parse(args); err != nil {
+		return 1
 	}
-	filename := args[0]
-	cfg, err := DefaultConfig(filename)
+
+	cfg, err := DefaultConfig(configFile)
 	if err != nil {
-		log.Println("Unable to read configuration", err.Error)
+		log.Println("Unable to read configuration", err.Error())
 		return 1
 	}
 	server, err := New(cfg)
 	if err != nil {
-		log.Println("Unable to create server", err.Error)
+		log.Println("Unable to create server", err.Error())
 		return 1
 	}
 	err = server.Run()
 	if err != nil {
-		log.Println("Unable to run server", err.Error)
+		log.Println("Unable to run server", err.Error())
 		return 1
 	}
 

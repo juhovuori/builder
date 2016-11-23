@@ -1,35 +1,39 @@
 package server
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 
 	"github.com/hashicorp/hcl"
-	"github.com/hashicorp/hcl/hcl/ast"
 )
 
-type Config interface {
-	GetInt(key string) (error, int)
-	GetString(key string) (error, string)
+// Config is the server configuration container
+type Config *builderConfig
+
+type stateStoreConfig struct {
+	Type      string `hcl:"type"`
+	Directory string `hcl:"directory"`
 }
 
-type BuilderConfig struct {
-	ast *ast.File
+type builderConfig struct {
+	ServerAddress string           `hcl:"bind_addr"`
+	Projects      []string         `hcl:"projects"`
+	StateStore    stateStoreConfig `hcl:"state_store"`
 }
 
-func (cfg BuilderConfig) GetInt(key string) (error, int) {
-	return nil, 1
+// ConfigFromString creates a config from string.
+func ConfigFromString(input string) (Config, error) {
+	var cfg builderConfig
+	if err := hcl.Decode(&cfg, input); err != nil {
+		return nil, fmt.Errorf("Failed to parse Configuration: %v", err)
+	}
+	fmt.Printf("%+v\n", cfg)
+	return &cfg, nil
 }
 
-func (cfg BuilderConfig) GetString(key string) (error, string) {
-	return nil, ""
-}
-
-func ConfigFromString(in []byte) (Config, error) {
-	parsed, err := hcl.ParseBytes(in)
-	return BuilderConfig{parsed}, err
-}
-
+// DefaultConfig reads in a file and parses it to
+// create a Config.
 func DefaultConfig(filename string) (Config, error) {
 	if filename == "" {
 		filename = os.Getenv("BUILDER_CONFIG")
@@ -45,5 +49,5 @@ func DefaultConfig(filename string) (Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	return ConfigFromString(bytes)
+	return ConfigFromString(string(bytes))
 }
