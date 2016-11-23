@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 
+	"github.com/juhovuori/builder/cfg"
 	"github.com/mitchellh/cli"
 )
 
@@ -30,9 +31,9 @@ func (cmd *Command) Run(args []string) int {
 		return 1
 	}
 
-	cfg, err := DefaultConfig(configFile)
+	cfg, err := cfg.New(configFile)
 	if err != nil {
-		log.Println("Unable to read configuration", err.Error())
+		log.Println("Unable to initialize system configuration", err.Error())
 		return 1
 	}
 	server, err := New(cfg)

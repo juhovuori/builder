@@ -1,6 +1,9 @@
 package server
 
-import "github.com/labstack/echo"
+import (
+	"github.com/juhovuori/builder/cfg"
+	"github.com/labstack/echo"
+)
 
 // Server is the HTTP server that implements Builder API
 type Server interface {
@@ -9,11 +12,11 @@ type Server interface {
 
 type echoServer struct {
 	echo *echo.Echo
-	cfg  Config
+	cfg  cfg.Cfg
 }
 
 func (s *echoServer) Run() error {
-	return s.echo.Start(s.cfg.ServerAddress)
+	return s.echo.Start(s.cfg.ServerAddress())
 }
 
 func (s *echoServer) setupRouteHandlers() error {
@@ -29,7 +32,7 @@ func (s *echoServer) setupRouteHandlers() error {
 }
 
 // New creates a new echo Server instance
-func New(cfg Config) (Server, error) {
+func New(cfg cfg.Cfg) (Server, error) {
 	echo := echo.New()
 	server := echoServer{
 		echo,
