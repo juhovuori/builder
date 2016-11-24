@@ -37,7 +37,10 @@ func (s *echoServer) hListProjects(c echo.Context) error {
 		if len(str) != 0 {
 			str += ", "
 		}
-		str += p.MD5 + "/" + p.URL
+		str += p.MD5() + "/" + p.URL() + "/" + p.Name()
+		if p.Err() != nil {
+			str += "/" + p.Err().Error()
+		}
 	}
 	return c.String(http.StatusOK, str)
 }

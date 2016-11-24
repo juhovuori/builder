@@ -13,6 +13,7 @@ type Cfg interface {
 	ServerAddress() string
 	Projects() []string
 	StateStore() stateStoreCfg
+	Watched() bool
 }
 
 type stateStoreCfg struct {
@@ -42,13 +43,16 @@ func (cm *cfgManager) StateStore() stateStoreCfg {
 	return cm.cfg.StateStore
 }
 
-// CfgFromString creates a Cfg from string.
-func CfgFromString(input string) (Cfg, error) {
+func (cm *cfgManager) Watched() bool {
+	return false
+}
+
+// FromString creates a Cfg from string.
+func FromString(input string) (Cfg, error) {
 	var cfg builderCfg
 	if err := hcl.Decode(&cfg, input); err != nil {
-		return nil, fmt.Errorf("Failed to parse Configuration: %v", err)
+		return nil, fmt.Errorf("Failed to parse configuration: %v", err)
 	}
-	fmt.Printf("%+v\n", cfg)
 	return &cfgManager{cfg}, nil
 }
 
@@ -68,5 +72,5 @@ func New(filename string) (Cfg, error) {
 	if err != nil {
 		return nil, err
 	}
-	return CfgFromString(string(bytes))
+	return FromString(string(bytes))
 }

@@ -26,7 +26,7 @@ func (p *projects) Projects() []Project {
 }
 
 func (p *projects) Project(project string) (Project, error) {
-	return Project{}, nil
+	return nil, nil
 }
 
 // New creates a new project manager
