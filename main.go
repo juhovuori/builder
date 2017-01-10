@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/juhovuori/builder/command"
-	"github.com/juhovuori/builder/server"
 	"github.com/mitchellh/cli"
 )
 
@@ -14,7 +13,7 @@ func main() {
 	c.Args = os.Args[1:]
 	c.Commands = map[string]cli.CommandFactory{
 		"nop":    command.NopFactory,
-		"server": server.CommandFactory,
+		"server": command.ServerFactory,
 	}
 	exitStatus, err := c.Run()
 	if err != nil {

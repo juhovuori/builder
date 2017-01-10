@@ -1,10 +1,11 @@
-package server
+package command
 
 import (
 	"flag"
 	"log"
 
 	"github.com/juhovuori/builder/app"
+	"github.com/juhovuori/builder/server"
 	"github.com/mitchellh/cli"
 )
 
@@ -35,12 +36,12 @@ func (cmd *Command) Run(args []string) int {
 		log.Println("Unable to start application", err.Error())
 		return 1
 	}
-	server, err := New(app)
+	s, err := server.New(app)
 	if err != nil {
 		log.Println("Unable to create server", err.Error())
 		return 1
 	}
-	err = server.Run()
+	err = s.Run()
 	if err != nil {
 		log.Println("Unable to run server", err.Error())
 		return 1
@@ -54,8 +55,8 @@ func (cmd *Command) Synopsis() string {
 	return "runs a server"
 }
 
-// CommandFactory creates a server command for CLI
-func CommandFactory() (cli.Command, error) {
+// ServerFactory creates a server command for CLI
+func ServerFactory() (cli.Command, error) {
 	cmd := Command{}
 	return &cmd, nil
 }
