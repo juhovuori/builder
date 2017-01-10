@@ -14,6 +14,10 @@ func (s *echoServer) hHealth(c echo.Context) error {
 	return c.String(http.StatusInternalServerError, "Not implemented.")
 }
 
+func (s *echoServer) hTriggerBuild(c echo.Context) error {
+	return c.String(http.StatusOK, "Done.")
+}
+
 func (s *echoServer) hCreateBuild(c echo.Context) error {
 	return c.String(http.StatusInternalServerError, "Not implemented.")
 }
