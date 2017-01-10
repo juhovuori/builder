@@ -15,7 +15,12 @@ func (s *echoServer) hHealth(c echo.Context) error {
 }
 
 func (s *echoServer) hTriggerBuild(c echo.Context) error {
-	return c.String(http.StatusOK, "Done.")
+	projectID := c.Param("id")
+	b, err := s.app.NewBuild(projectID)
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, b)
 }
 
 func (s *echoServer) hCreateBuild(c echo.Context) error {

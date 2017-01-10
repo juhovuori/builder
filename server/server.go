@@ -15,11 +15,11 @@ type echoServer struct {
 	app  app.App
 }
 
-func (s *echoServer) Run() error {
+func (s echoServer) Run() error {
 	return s.echo.Start(s.app.Config().ServerAddress())
 }
 
-func (s *echoServer) setupRouteHandlers() error {
+func (s echoServer) setupRouteHandlers() error {
 	s.echo.GET("/", s.hRoot)
 	s.echo.GET("/health", s.hHealth)
 	s.echo.POST("/v1/builds", s.hCreateBuild)
@@ -40,5 +40,5 @@ func New(app app.App) (Server, error) {
 		app,
 	}
 	server.setupRouteHandlers()
-	return &server, nil
+	return server, nil
 }

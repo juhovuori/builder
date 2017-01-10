@@ -1,12 +1,17 @@
 package app
 
-import "github.com/juhovuori/builder/project"
+import (
+	"github.com/juhovuori/builder/build"
+	"github.com/juhovuori/builder/project"
+)
 
 // App is the container for the whole builder application. This is used by
 // frontends such as HTTP server or command line interface
 type App interface {
 	Config() Config
 	Projects() []project.Project
+	Project(project string) (project.Project, error)
+	NewBuild(projectID string) (build.Build, error)
 }
 
 type app struct {
@@ -14,12 +19,28 @@ type app struct {
 	cfg      Config
 }
 
-func (app app) Config() Config {
-	return app.cfg
+func (a app) Config() Config {
+	return a.cfg
 }
 
-func (app app) Projects() []project.Project {
-	return app.projects.Projects()
+func (a app) Projects() []project.Project {
+	return a.projects.Projects()
+}
+
+func (a app) Project(project string) (project.Project, error) {
+	return a.projects.Project(project)
+}
+
+func (a app) NewBuild(projectID string) (build.Build, error) {
+	p, err := a.Project(projectID)
+	if err != nil {
+		return nil, err
+	}
+	b, err := build.New(p)
+	if err != nil {
+		return nil, err
+	}
+	return b, nil
 }
 
 // New creates a new App from configuration
