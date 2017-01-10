@@ -1,4 +1,4 @@
-package projects
+package project
 
 import "github.com/juhovuori/builder/cfg"
 

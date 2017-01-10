@@ -2,7 +2,7 @@ package server
 
 import (
 	"github.com/juhovuori/builder/cfg"
-	"github.com/juhovuori/builder/projects"
+	"github.com/juhovuori/builder/project"
 	"github.com/labstack/echo"
 )
 
@@ -13,7 +13,7 @@ type Server interface {
 
 type echoServer struct {
 	echo     *echo.Echo
-	projects projects.Projects
+	projects project.Projects
 	cfg      cfg.Cfg
 }
 
@@ -36,7 +36,7 @@ func (s *echoServer) setupRouteHandlers() error {
 // New creates a new echo Server instance
 func New(cfg cfg.Cfg) (Server, error) {
 	echo := echo.New()
-	projects, err := projects.New(cfg)
+	projects, err := project.New(cfg)
 	if err != nil {
 		return nil, err
 	}
