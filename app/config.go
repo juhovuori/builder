@@ -13,19 +13,19 @@ import (
 type Config interface {
 	ServerAddress() string
 	project.ProjectsConfig
-	StateStore() stateStoreCfg
+	Store() storeCfg
 	Watched() bool
 }
 
-type stateStoreCfg struct {
+type storeCfg struct {
 	Type      string `hcl:"type"`
 	Directory string `hcl:"directory"`
 }
 
 type builderCfg struct {
-	ServerAddress string        `hcl:"bind_addr"`
-	Projects      []string      `hcl:"projects"`
-	StateStore    stateStoreCfg `hcl:"state_store"`
+	ServerAddress string   `hcl:"bind_addr"`
+	Projects      []string `hcl:"projects"`
+	Store         storeCfg `hcl:"state_store"`
 }
 
 type cfgManager struct {
@@ -40,8 +40,8 @@ func (cm *cfgManager) Projects() []string {
 	return cm.cfg.Projects
 }
 
-func (cm *cfgManager) StateStore() stateStoreCfg {
-	return cm.cfg.StateStore
+func (cm *cfgManager) Store() storeCfg {
+	return cm.cfg.Store
 }
 
 func (cm *cfgManager) Watched() bool {
