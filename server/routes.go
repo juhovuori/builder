@@ -36,7 +36,7 @@ func (s *echoServer) hAddStage(c echo.Context) error {
 
 func (s *echoServer) hListProjects(c echo.Context) error {
 	str := ""
-	projects := s.projects.Projects()
+	projects := s.app.Projects()
 	for _, p := range projects {
 		if len(str) != 0 {
 			str += ", "

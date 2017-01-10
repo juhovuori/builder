@@ -1,4 +1,4 @@
-package cfg
+package app
 
 import (
 	"fmt"
@@ -6,12 +6,13 @@ import (
 	"os"
 
 	"github.com/hashicorp/hcl"
+	"github.com/juhovuori/builder/project"
 )
 
-// Cfg is the server configuration container
-type Cfg interface {
+// Config is the server configuration container
+type Config interface {
 	ServerAddress() string
-	Projects() []string
+	project.ProjectsConfig
 	StateStore() stateStoreCfg
 	Watched() bool
 }
@@ -48,7 +49,7 @@ func (cm *cfgManager) Watched() bool {
 }
 
 // FromString creates a Cfg from string.
-func FromString(input string) (Cfg, error) {
+func FromString(input string) (Config, error) {
 	var cfg builderCfg
 	if err := hcl.Decode(&cfg, input); err != nil {
 		return nil, fmt.Errorf("Failed to parse configuration: %v", err)
@@ -56,8 +57,8 @@ func FromString(input string) (Cfg, error) {
 	return &cfgManager{cfg}, nil
 }
 
-// New creates a new configuration manager from given URL / filename
-func New(filename string) (Cfg, error) {
+// NewConfig creates a new configuration manager from given URL / filename
+func NewConfig(filename string) (Config, error) {
 	if filename == "" {
 		filename = os.Getenv("BUILDER_CONFIG")
 	}

@@ -7,6 +7,11 @@ import (
 	"github.com/hashicorp/hcl"
 )
 
+// ProjectsConfig is the configurationfor projects object.
+type ProjectsConfig interface {
+	Projects() []string
+}
+
 // Configuration represents the configuration of a single project
 type Configuration interface {
 	Name() string

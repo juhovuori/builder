@@ -4,7 +4,7 @@ import (
 	"flag"
 	"log"
 
-	"github.com/juhovuori/builder/cfg"
+	"github.com/juhovuori/builder/app"
 	"github.com/mitchellh/cli"
 )
 
@@ -30,13 +30,12 @@ func (cmd *Command) Run(args []string) int {
 	if err := cmdFlags.Parse(args); err != nil {
 		return 1
 	}
-
-	cfg, err := cfg.New(configFile)
+	app, err := app.NewFromFilename(configFile)
 	if err != nil {
-		log.Println("Unable to initialize system configuration", err.Error())
+		log.Println("Unable to start application", err.Error())
 		return 1
 	}
-	server, err := New(cfg)
+	server, err := New(app)
 	if err != nil {
 		log.Println("Unable to create server", err.Error())
 		return 1

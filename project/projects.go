@@ -1,7 +1,5 @@
 package project
 
-import "github.com/juhovuori/builder/cfg"
-
 // Projects is the project manager
 type Projects interface {
 	Configure([]string)
@@ -30,7 +28,7 @@ func (p *projects) Project(project string) (Project, error) {
 }
 
 // New creates a new project manager
-func New(c cfg.Cfg) (Projects, error) {
+func New(c ProjectsConfig) (Projects, error) {
 	p := &projects{}
 	p.Configure(c.Projects())
 	return p, nil
