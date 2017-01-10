@@ -16,7 +16,7 @@ func (s *echoServer) hHealth(c echo.Context) error {
 
 func (s *echoServer) hTriggerBuild(c echo.Context) error {
 	projectID := c.Param("id")
-	b, err := s.app.NewBuild(projectID)
+	b, err := s.app.TriggerBuild(projectID)
 	if err != nil {
 		return err
 	}

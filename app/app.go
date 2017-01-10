@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/juhovuori/builder/build"
+	"github.com/juhovuori/builder/exec"
 	"github.com/juhovuori/builder/project"
 )
 
@@ -11,7 +12,7 @@ type App interface {
 	Config() Config
 	Projects() []project.Project
 	Project(project string) (project.Project, error)
-	NewBuild(projectID string) (build.Build, error)
+	TriggerBuild(projectID string) (build.Build, error)
 }
 
 type app struct {
@@ -31,12 +32,20 @@ func (a app) Project(project string) (project.Project, error) {
 	return a.projects.Project(project)
 }
 
-func (a app) NewBuild(projectID string) (build.Build, error) {
+func (a app) TriggerBuild(projectID string) (build.Build, error) {
 	p, err := a.Project(projectID)
 	if err != nil {
 		return nil, err
 	}
 	b, err := build.New(p)
+	if err != nil {
+		return nil, err
+	}
+	e, err := exec.New()
+	if err != nil {
+		return nil, err
+	}
+	_, err = e.Run(p.Script())
 	if err != nil {
 		return nil, err
 	}

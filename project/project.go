@@ -39,6 +39,10 @@ func (p *project) Description() string {
 	return p.cfg.Description
 }
 
+func (p *project) Script() string {
+	return p.cfg.Script
+}
+
 func (p *project) Watched() bool {
 	return false
 }

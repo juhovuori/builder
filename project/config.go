@@ -16,12 +16,14 @@ type ProjectsConfig interface {
 type Configuration interface {
 	Name() string
 	Description() string
+	Script() string
 }
 
 // config represents the configurationof a single project
 type config struct {
 	Name        string `hcl:"name"`
 	Description string `hcl:"description"`
+	Script      string `hcl:"script"`
 }
 
 func configFromString(input string) (config, error) {
