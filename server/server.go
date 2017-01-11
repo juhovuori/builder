@@ -41,5 +41,6 @@ func New(app app.App) (Server, error) {
 		app,
 	}
 	server.setupRouteHandlers()
+	setupVersion()
 	return server, nil
 }
