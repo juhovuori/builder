@@ -10,7 +10,30 @@ type Build interface {
 	Error() error
 }
 
+type defaultBuild struct {
+	id        string
+	project   project.Project
+	completed bool
+	err       error
+}
+
+func (b *defaultBuild) ID() string {
+	return b.id
+}
+
+func (b *defaultBuild) Project() project.Project {
+	return b.project
+}
+
+func (b *defaultBuild) Completed() bool {
+	return b.completed
+}
+
+func (b *defaultBuild) Error() error {
+	return b.err
+}
+
 // New creates a new build
 func New(project project.Project) (Build, error) {
-	return nil, nil
+	return &defaultBuild{"", project, false, nil}, nil
 }

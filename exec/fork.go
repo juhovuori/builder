@@ -5,9 +5,10 @@ package exec
 
 type forkExecutor struct {
 	dir string
+	URL string
 }
 
-func (f *forkExecutor) Run(URL string) (<-chan int, error) {
+func (f *forkExecutor) Run() (<-chan int, error) {
 	var err error
 	if err = f.createDir(); err != nil {
 		return nil, err

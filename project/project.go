@@ -23,7 +23,7 @@ func (p *project) URL() string {
 	return p.url
 }
 
-func (p *project) MD5() string {
+func (p *project) ID() string {
 	return p.md5
 }
 
@@ -41,10 +41,6 @@ func (p *project) Description() string {
 
 func (p *project) Script() string {
 	return p.cfg.Script
-}
-
-func (p *project) Watched() bool {
-	return false
 }
 
 func newProject(URL string) Project {

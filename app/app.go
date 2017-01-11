@@ -15,24 +15,24 @@ type App interface {
 	TriggerBuild(projectID string) (build.Build, error)
 }
 
-type app struct {
+type defaultApp struct {
 	projects project.Projects
 	cfg      Config
 }
 
-func (a app) Config() Config {
+func (a defaultApp) Config() Config {
 	return a.cfg
 }
 
-func (a app) Projects() []project.Project {
+func (a defaultApp) Projects() []project.Project {
 	return a.projects.Projects()
 }
 
-func (a app) Project(project string) (project.Project, error) {
+func (a defaultApp) Project(project string) (project.Project, error) {
 	return a.projects.Project(project)
 }
 
-func (a app) TriggerBuild(projectID string) (build.Build, error) {
+func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 	p, err := a.Project(projectID)
 	if err != nil {
 		return nil, err
@@ -41,11 +41,11 @@ func (a app) TriggerBuild(projectID string) (build.Build, error) {
 	if err != nil {
 		return nil, err
 	}
-	e, err := exec.New()
+	e, err := exec.New(p.Script())
 	if err != nil {
 		return nil, err
 	}
-	_, err = e.Run(p.Script())
+	_, err = e.Run()
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func New(cfg Config) (App, error) {
 	if err != nil {
 		return nil, err
 	}
-	newApp := app{
+	newApp := defaultApp{
 		projects,
 		cfg,
 	}

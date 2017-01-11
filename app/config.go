@@ -29,22 +29,22 @@ type builderCfg struct {
 }
 
 type cfgManager struct {
-	cfg builderCfg
+	cfg *builderCfg
 }
 
-func (cm *cfgManager) ServerAddress() string {
+func (cm cfgManager) ServerAddress() string {
 	return cm.cfg.ServerAddress
 }
 
-func (cm *cfgManager) Projects() []string {
+func (cm cfgManager) Projects() []string {
 	return cm.cfg.Projects
 }
 
-func (cm *cfgManager) Store() storeCfg {
+func (cm cfgManager) Store() storeCfg {
 	return cm.cfg.Store
 }
 
-func (cm *cfgManager) Watched() bool {
+func (cm cfgManager) Watched() bool {
 	return false
 }
 
@@ -54,7 +54,7 @@ func FromString(input string) (Config, error) {
 	if err := hcl.Decode(&cfg, input); err != nil {
 		return nil, fmt.Errorf("Failed to parse configuration: %v", err)
 	}
-	return &cfgManager{cfg}, nil
+	return cfgManager{&cfg}, nil
 }
 
 // NewConfig creates a new configuration manager from given URL / filename

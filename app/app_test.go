@@ -3,7 +3,31 @@ package app
 import (
 	"fmt"
 	"testing"
+
+	"github.com/juhovuori/builder/project"
 )
+
+type mockP struct {
+	id string
+}
+
+func (p mockP) Name() string        { return "" }
+func (p mockP) Description() string { return "" }
+func (p mockP) Script() string      { return "" }
+func (p mockP) URL() string         { return "" }
+func (p mockP) ID() string          { return p.id }
+func (p mockP) Err() error          { return nil }
+
+func (p mockP) Configure([]string) {}
+func (p mockP) Projects() []project.Project {
+	return nil
+}
+func (p mockP) Project(id string) (project.Project, error) {
+	if id == p.id {
+		return p, nil
+	}
+	return nil, project.ErrNotFound
+}
 
 func TestNewFromFilename(t *testing.T) {
 	cases := []struct {
@@ -22,5 +46,24 @@ func TestNewFromFilename(t *testing.T) {
 			t.Errorf("Expected non-nil-cfg\n")
 			continue
 		}
+	}
+}
+
+func TestTriggerBuild(t *testing.T) {
+	projectID := "id"
+	projectURL := "1"
+	projects := mockP{projectID}
+	cfg := builderCfg{Projects: []string{projectURL}}
+	config := cfgManager{&cfg}
+	app := defaultApp{
+		projects,
+		config,
+	}
+	b, err := app.TriggerBuild(projectID)
+	if err != nil {
+		t.Fatalf("Unexpected error %v\n", err)
+	}
+	if b.Project().ID() != projectID {
+		t.Errorf("Wrong buildID %v\n", b.Project().ID())
 	}
 }
