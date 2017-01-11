@@ -45,18 +45,8 @@ func (s *echoServer) hAddStage(c echo.Context) error {
 }
 
 func (s *echoServer) hListProjects(c echo.Context) error {
-	str := ""
 	projects := s.app.Projects()
-	for _, p := range projects {
-		if len(str) != 0 {
-			str += ", "
-		}
-		str += p.ID() + "/" + p.URL() + "/" + p.Name()
-		if p.Err() != nil {
-			str += "/" + p.Err().Error()
-		}
-	}
-	return c.String(http.StatusOK, str)
+	return c.JSON(http.StatusOK, projects)
 }
 
 func (s *echoServer) hGetProject(c echo.Context) error {
