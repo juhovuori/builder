@@ -1,4 +1,5 @@
 #!/bin/bash
 
 commit=$(git rev-parse HEAD)
-echo -n "{\"commit\":\"$commit\"}"
+ts=$(date -Is)
+echo -n "{\"commit\":\"$commit\", \"build-time\":\"$ts\"}"

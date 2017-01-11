@@ -1,4 +1,4 @@
-.PHONY: deploy publish build test test-v
+.PHONY: deploy publish build test test-v version
 
 test:
 	go test ./...
@@ -6,11 +6,13 @@ test:
 test-v:
 	go test -v ./...
 
-build:
+version:
 	./scripts/version.sh >version.json
+
+build: version
 	go build
 
-publish:
+publish: version
 	./scripts/publish.sh
 
 deploy:
