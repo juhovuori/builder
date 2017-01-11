@@ -41,8 +41,8 @@ func TestTriggerBuild(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Unexpected error %v\n", err)
 	}
-	if b.Project().ID() != projectID {
-		t.Errorf("Wrong buildID %v\n", b.Project().ID())
+	if b.ProjectID() != projectID {
+		t.Errorf("Wrong buildID %v\n", b.ProjectID())
 	}
 }
 

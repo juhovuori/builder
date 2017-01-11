@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/juhovuori/builder/build"
-	"github.com/juhovuori/builder/project"
 )
 
 func TestNew(t *testing.T) {
@@ -39,13 +38,9 @@ type mock struct {
 	t string
 }
 
-func (m mock) ID() string               { return "" }
-func (m mock) ExecutorType() string     { return m.t }
-func (m mock) Project() project.Project { return m }
-func (m mock) Completed() bool          { return false }
-func (m mock) Error() error             { return nil }
-func (m mock) Name() string             { return "" }
-func (m mock) Description() string      { return "" }
-func (m mock) Script() string           { return "" }
-func (m mock) URL() string              { return "" }
-func (m mock) Err() error               { return nil }
+func (m mock) ID() string           { return "" }
+func (m mock) ExecutorType() string { return m.t }
+func (m mock) ProjectID() string    { return "" }
+func (m mock) Completed() bool      { return false }
+func (m mock) Error() error         { return nil }
+func (m mock) Script() string       { return "" }

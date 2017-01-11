@@ -6,16 +6,19 @@ import "github.com/juhovuori/builder/project"
 type Build interface {
 	ID() string
 	ExecutorType() string
-	Project() project.Project
+	ProjectID() string
+	Script() string
 	Completed() bool
 	Error() error
 }
 
 type defaultBuild struct {
-	id        string
-	project   project.Project
-	completed bool
-	err       error
+	id           string
+	projectID    string
+	script       string
+	executorType string
+	completed    bool
+	err          error
 }
 
 func (b *defaultBuild) ID() string {
@@ -23,14 +26,15 @@ func (b *defaultBuild) ID() string {
 }
 
 func (b *defaultBuild) ExecutorType() string {
-	if b.project.Script() == "" {
-		return "nop"
-	}
-	return "fork"
+	return b.executorType
 }
 
-func (b *defaultBuild) Project() project.Project {
-	return b.project
+func (b *defaultBuild) ProjectID() string {
+	return b.projectID
+}
+
+func (b *defaultBuild) Script() string {
+	return b.script
 }
 
 func (b *defaultBuild) Completed() bool {
@@ -43,5 +47,21 @@ func (b *defaultBuild) Error() error {
 
 // New creates a new build
 func New(project project.Project) (Build, error) {
-	return &defaultBuild{"", project, false, nil}, nil
+	if project == nil {
+		return nil, ErrNilProject
+	}
+	e := "nop"
+	if project.Script() != "" {
+		e = "fork"
+	}
+	b := defaultBuild{
+		id:           "",
+		projectID:    project.ID(),
+		script:       project.Script(),
+		executorType: e,
+		completed:    false,
+		err:          nil,
+	}
+	return &b, nil
+
 }

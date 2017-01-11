@@ -14,7 +14,7 @@ func New(b build.Build) (Executor, error) {
 	case "fork":
 		e := forkExecutor{
 			Dir:       "/tmp/builder",
-			ScriptURL: b.Project().Script(),
+			ScriptURL: b.Script(),
 		}
 		return &e, nil
 	case "nop":

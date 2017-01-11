@@ -23,8 +23,13 @@ func (p *projects) Projects() []Project {
 	return p.projects
 }
 
-func (p *projects) Project(project string) (Project, error) {
-	return nil, nil
+func (p *projects) Project(projectID string) (Project, error) {
+	for _, pr := range p.projects {
+		if pr.ID() == projectID {
+			return pr, nil
+		}
+	}
+	return nil, ErrNotFound
 }
 
 // New creates a new project manager

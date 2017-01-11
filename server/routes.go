@@ -1,6 +1,7 @@
 package server
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/labstack/echo"
@@ -23,6 +24,7 @@ func (s *echoServer) hTriggerBuild(c echo.Context) error {
 	projectID := c.Param("id")
 	b, err := s.app.TriggerBuild(projectID)
 	if err != nil {
+		log.Printf("%+v\n", err)
 		return err
 	}
 	return c.JSON(http.StatusOK, b)
