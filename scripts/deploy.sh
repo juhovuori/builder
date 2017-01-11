@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FILES="builder builder.hcl project.hcl"
+FILES="builder builder.hcl project.hcl version.json"
 
 echo Stopping builder
 killall builder
