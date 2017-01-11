@@ -2,9 +2,9 @@ package project
 
 import (
 	"fmt"
-	"io/ioutil"
 
 	"github.com/hashicorp/hcl"
+	"github.com/juhovuori/builder/fetcher"
 )
 
 // ProjectsConfig is the configurationfor projects object.
@@ -35,7 +35,7 @@ func configFromString(input string) (config, error) {
 }
 
 func fetchConfig(filename string) (config, error) {
-	bytes, err := ioutil.ReadFile(filename)
+	bytes, err := fetcher.Fetch(filename)
 	if err != nil {
 		return config{}, err
 	}

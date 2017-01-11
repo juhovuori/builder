@@ -2,10 +2,9 @@ package app
 
 import (
 	"fmt"
-	"io/ioutil"
-	"os"
 
 	"github.com/hashicorp/hcl"
+	"github.com/juhovuori/builder/fetcher"
 	"github.com/juhovuori/builder/project"
 )
 
@@ -54,17 +53,7 @@ func FromString(input string) (Config, error) {
 
 // NewConfig creates a new configuration manager from given URL / filename
 func NewConfig(filename string) (Config, error) {
-	if filename == "" {
-		filename = os.Getenv("BUILDER_CONFIG")
-	}
-	if filename == "" {
-		wd, err := os.Getwd()
-		if err != nil {
-			return nil, err
-		}
-		filename = wd + "/builder.hcl"
-	}
-	bytes, err := ioutil.ReadFile(filename)
+	bytes, err := fetcher.Fetch(filename)
 	if err != nil {
 		return nil, err
 	}

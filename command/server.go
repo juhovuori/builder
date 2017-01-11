@@ -3,6 +3,7 @@ package command
 import (
 	"flag"
 	"log"
+	"os"
 
 	"github.com/juhovuori/builder/app"
 	"github.com/juhovuori/builder/server"
@@ -31,6 +32,19 @@ func (cmd *Command) Run(args []string) int {
 	if err := cmdFlags.Parse(args); err != nil {
 		return 1
 	}
+
+	if configFile == "" {
+		configFile = os.Getenv("BUILDER_CONFIG")
+	}
+	if configFile == "" {
+		wd, err := os.Getwd()
+		if err != nil {
+			log.Println("Unable to get working directory", err.Error())
+			return 1
+		}
+		configFile = wd + "/builder.hcl"
+	}
+
 	app, err := app.NewFromFilename(configFile)
 	if err != nil {
 		log.Println("Unable to start application", err.Error())
