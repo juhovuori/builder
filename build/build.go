@@ -1,6 +1,10 @@
 package build
 
-import "github.com/juhovuori/builder/project"
+// Buildable is type Buildable interface {
+type Buildable interface {
+	ID() string
+	Script() string
+}
 
 // Build describes a single build
 type Build interface {
@@ -46,7 +50,7 @@ func (b *defaultBuild) Error() error {
 }
 
 // New creates a new build
-func New(project project.Project) (Build, error) {
+func New(project Buildable) (Build, error) {
 	if project == nil {
 		return nil, ErrNilProject
 	}
