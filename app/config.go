@@ -14,7 +14,6 @@ type Config interface {
 	ServerAddress() string
 	project.ProjectsConfig
 	Store() storeCfg
-	Watched() bool
 }
 
 type storeCfg struct {
@@ -42,10 +41,6 @@ func (cm cfgManager) Projects() []string {
 
 func (cm cfgManager) Store() storeCfg {
 	return cm.cfg.Store
-}
-
-func (cm cfgManager) Watched() bool {
-	return false
 }
 
 // FromString creates a Cfg from string.
