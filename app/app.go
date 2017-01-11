@@ -41,7 +41,7 @@ func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 	if err != nil {
 		return nil, err
 	}
-	e, err := exec.New(p.Script())
+	e, err := exec.New(b)
 	if err != nil {
 		return nil, err
 	}

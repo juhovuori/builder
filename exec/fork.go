@@ -1,11 +1,13 @@
 package exec
 
+import "github.com/juhovuori/builder/build"
+
 // The fork executor is a simple executor that just runs the build script in a
 // a temporary directory in a forked process.
 
 type forkExecutor struct {
 	dir string
-	URL string
+	b   build.Build
 }
 
 func (f *forkExecutor) Run() (<-chan int, error) {
@@ -13,7 +15,6 @@ func (f *forkExecutor) Run() (<-chan int, error) {
 	if err = f.createDir(); err != nil {
 		return nil, err
 	}
-	defer f.cleanup()
 	if err = f.copyScript(); err != nil {
 		return nil, err
 	}
@@ -35,6 +36,6 @@ func (f *forkExecutor) run() error {
 	return nil
 }
 
-func (f *forkExecutor) cleanup() error {
+func (f *forkExecutor) Cleanup() error {
 	return nil
 }
