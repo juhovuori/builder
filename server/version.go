@@ -30,6 +30,11 @@ var startup time.Time
 
 func setupVersion() {
 	startup = time.Now()
+	setupGeneratedVersion()
+	globalVersionInfo.StartupTime = startup.Format(time.RFC3339)
+}
+
+func setupGeneratedVersion() {
 	data, err := ioutil.ReadFile(fn)
 	if err != nil {
 		log.Printf("Error reading %s: %s\n", fn, err.Error())
@@ -40,5 +45,4 @@ func setupVersion() {
 		log.Printf("Error decoding version JSON in %s: %s\n", fn, err.Error())
 		return
 	}
-	globalVersionInfo.StartupTime = startup.Format(time.RFC3339)
 }
