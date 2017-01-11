@@ -13,22 +13,22 @@ type Project interface {
 
 // project is the main implementation of Project
 type project struct {
-	url string
-	md5 string
-	err error
-	cfg config
+	Purl string `json:"url"`
+	Pmd5 string `json:"id"`
+	Perr error  `json:"error"`
+	cfg  config
 }
 
 func (p *project) URL() string {
-	return p.url
+	return p.Purl
 }
 
 func (p *project) ID() string {
-	return p.md5
+	return p.Pmd5
 }
 
 func (p *project) Err() error {
-	return p.err
+	return p.Perr
 }
 
 func (p *project) Name() string {
@@ -47,10 +47,10 @@ func newProject(URL string) Project {
 	MD5 := md5.Sum([]byte(URL))
 	config, err := fetchConfig(URL)
 	p := project{
-		url: URL,
-		md5: fmt.Sprintf("%x", MD5),
-		err: err,
-		cfg: config,
+		Purl: URL,
+		Pmd5: fmt.Sprintf("%x", MD5),
+		Perr: err,
+		cfg:  config,
 	}
 	return &p
 }
