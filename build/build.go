@@ -13,36 +13,36 @@ type Build interface {
 }
 
 type defaultBuild struct {
-	id           string
-	projectID    string
-	script       string
-	executorType string
-	completed    bool
-	err          error
+	BID           string `json:"id"`
+	BProjectID    string `json:"project-id"`
+	BScript       string `json:"script"`
+	BExecutorType string `json:"executor-type"`
+	BCompleted    bool   `json:"completed"`
+	BErr          error  `json:"error"`
 }
 
 func (b *defaultBuild) ID() string {
-	return b.id
+	return b.BID
 }
 
 func (b *defaultBuild) ExecutorType() string {
-	return b.executorType
+	return b.BExecutorType
 }
 
 func (b *defaultBuild) ProjectID() string {
-	return b.projectID
+	return b.BProjectID
 }
 
 func (b *defaultBuild) Script() string {
-	return b.script
+	return b.BScript
 }
 
 func (b *defaultBuild) Completed() bool {
-	return b.completed
+	return b.BCompleted
 }
 
 func (b *defaultBuild) Error() error {
-	return b.err
+	return b.BErr
 }
 
 // New creates a new build
@@ -55,12 +55,12 @@ func New(project project.Project) (Build, error) {
 		e = "fork"
 	}
 	b := defaultBuild{
-		id:           "",
-		projectID:    project.ID(),
-		script:       project.Script(),
-		executorType: e,
-		completed:    false,
-		err:          nil,
+		BID:           "",
+		BProjectID:    project.ID(),
+		BScript:       project.Script(),
+		BExecutorType: e,
+		BCompleted:    false,
+		BErr:          nil,
 	}
 	return &b, nil
 
