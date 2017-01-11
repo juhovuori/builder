@@ -5,6 +5,7 @@ import "github.com/juhovuori/builder/project"
 // Build describes a single build
 type Build interface {
 	ID() string
+	ExecutorType() string
 	Project() project.Project
 	Completed() bool
 	Error() error
@@ -19,6 +20,13 @@ type defaultBuild struct {
 
 func (b *defaultBuild) ID() string {
 	return b.id
+}
+
+func (b *defaultBuild) ExecutorType() string {
+	if b.project.Script() == "" {
+		return "nop"
+	}
+	return "fork"
 }
 
 func (b *defaultBuild) Project() project.Project {

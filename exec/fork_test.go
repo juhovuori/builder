@@ -4,19 +4,20 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"path"
 	"sync"
 	"testing"
 	"time"
-
-	"github.com/juhovuori/builder/project"
 )
 
 func TestForkExecutor(t *testing.T) {
 	dir := tmpFilename()
-	b := mockBuild{}
-	e := forkExecutor{dir, &b}
-	e.Run()
-
+	script := "testdata/success.sh"
+	e := forkExecutor{dir, script}
+	_, err := e.Run()
+	if err != nil {
+		t.Fatalf("Run returned error: %v\n", err)
+	}
 	info, err := os.Stat(dir)
 	if err != nil {
 		t.Fatalf("Error in stat %s: %v\n", dir, err)
@@ -42,13 +43,6 @@ var once sync.Once
 func tmpFilename() string {
 	once.Do(func() { rand.Seed(time.Now().UnixNano()) })
 	n := rand.Int63()
-	dir := fmt.Sprintf("%s/builder-%019d", os.TempDir(), n)
+	dir := path.Join(os.TempDir(), fmt.Sprintf("builder-%019d", n))
 	return dir
 }
-
-type mockBuild struct{}
-
-func (b *mockBuild) ID() string               { return "" }
-func (b *mockBuild) Project() project.Project { return nil }
-func (b *mockBuild) Completed() bool          { return false }
-func (b *mockBuild) Error() error             { return nil }

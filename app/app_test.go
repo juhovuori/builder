@@ -7,28 +7,6 @@ import (
 	"github.com/juhovuori/builder/project"
 )
 
-type mockP struct {
-	id string
-}
-
-func (p mockP) Name() string        { return "" }
-func (p mockP) Description() string { return "" }
-func (p mockP) Script() string      { return "" }
-func (p mockP) URL() string         { return "" }
-func (p mockP) ID() string          { return p.id }
-func (p mockP) Err() error          { return nil }
-
-func (p mockP) Configure([]string) {}
-func (p mockP) Projects() []project.Project {
-	return nil
-}
-func (p mockP) Project(id string) (project.Project, error) {
-	if id == p.id {
-		return p, nil
-	}
-	return nil, project.ErrNotFound
-}
-
 func TestNewFromFilename(t *testing.T) {
 	cases := []struct {
 		filename string
@@ -66,4 +44,26 @@ func TestTriggerBuild(t *testing.T) {
 	if b.Project().ID() != projectID {
 		t.Errorf("Wrong buildID %v\n", b.Project().ID())
 	}
+}
+
+type mockP struct {
+	id string
+}
+
+func (p mockP) Name() string        { return "" }
+func (p mockP) Description() string { return "" }
+func (p mockP) Script() string      { return "" }
+func (p mockP) URL() string         { return "" }
+func (p mockP) ID() string          { return p.id }
+func (p mockP) Err() error          { return nil }
+
+func (p mockP) Configure([]string) {}
+func (p mockP) Projects() []project.Project {
+	return nil
+}
+func (p mockP) Project(id string) (project.Project, error) {
+	if id == p.id {
+		return p, nil
+	}
+	return nil, project.ErrNotFound
 }

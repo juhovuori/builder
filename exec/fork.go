@@ -1,17 +1,19 @@
 package exec
 
 import (
+	"io/ioutil"
 	"os"
+	"path"
 
-	"github.com/juhovuori/builder/build"
+	"github.com/juhovuori/builder/fetcher"
 )
 
 // The fork executor is a simple executor that just runs the build script in a
 // a temporary directory in a forked process.
 
 type forkExecutor struct {
-	dir string
-	b   build.Build
+	Dir       string
+	ScriptURL string
 }
 
 func (f *forkExecutor) Run() (<-chan int, error) {
@@ -29,11 +31,17 @@ func (f *forkExecutor) Run() (<-chan int, error) {
 }
 
 func (f *forkExecutor) createDir() error {
-	return os.Mkdir(f.dir, 0755)
+	return os.Mkdir(f.Dir, 0755)
 }
 
 func (f *forkExecutor) copyScript() error {
-	return nil
+	data, err := fetcher.Fetch(f.ScriptURL)
+	if err != nil {
+		return err
+	}
+	filename := path.Join(f.Dir, "script")
+	err = ioutil.WriteFile(filename, data, 0755)
+	return err
 }
 
 func (f *forkExecutor) run() error {
@@ -41,5 +49,5 @@ func (f *forkExecutor) run() error {
 }
 
 func (f *forkExecutor) Cleanup() error {
-	return os.Remove(f.dir)
+	return os.RemoveAll(f.Dir)
 }

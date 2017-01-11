@@ -10,6 +10,17 @@ type Executor interface {
 
 // New creates a new Executor
 func New(b build.Build) (Executor, error) {
-	e := forkExecutor{"/tmp/builder", b}
-	return &e, nil
+	switch b.ExecutorType() {
+	case "fork":
+		e := forkExecutor{
+			Dir:       "/tmp/builder",
+			ScriptURL: b.Project().Script(),
+		}
+		return &e, nil
+	case "nop":
+		e := nopExecutor{}
+		return &e, nil
+	default:
+		return nil, ErrInvalidExecutor
+	}
 }
