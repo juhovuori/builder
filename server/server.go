@@ -1,8 +1,11 @@
 package server
 
 import (
+	"net/http"
+
 	"github.com/juhovuori/builder/app"
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
 
 // Server is the HTTP server that implements Builder API
@@ -33,14 +36,40 @@ func (s echoServer) setupRouteHandlers() error {
 	return nil
 }
 
+func (s echoServer) errorHandler(err error, c echo.Context) {
+	code := http.StatusInternalServerError
+	msg := http.StatusText(code)
+	if he, ok := err.(*echo.HTTPError); ok {
+		code = he.Code
+		msg = he.Message
+	}
+	if !c.Response().Committed {
+		if c.Request().Method == echo.HEAD { // Issue #608
+			c.NoContent(code)
+		} else {
+			err := serverError{code, msg}
+			c.JSON(code, err)
+		}
+	}
+	s.echo.Logger.Error(err)
+}
+
 // New creates a new echo Server instance
 func New(app app.App) (Server, error) {
-	echo := echo.New()
 	server := echoServer{
-		echo,
-		app,
+		echo: echo.New(),
+		app:  app,
 	}
+	server.echo.HTTPErrorHandler = server.errorHandler
+	server.echo.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "method=${method}, uri=${uri}, status=${status}\n",
+	}))
 	server.setupRouteHandlers()
 	setupVersion()
 	return server, nil
+}
+
+type serverError struct {
+	Code  int    `json:"code"`
+	Error string `json:"error"`
 }
