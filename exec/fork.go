@@ -58,6 +58,7 @@ func (f *forkExecutor) run(ch chan<- int) error {
 	filename := path.Join(f.Dir, scriptfilename)
 	args := []string{}
 	cmd := exec.Command(filename, args...)
+	cmd.Dir = f.Dir
 	if err := cmd.Start(); err != nil {
 		return err
 	}
@@ -80,6 +81,7 @@ func (f *forkExecutor) monitor(ch chan<- int, cmd *exec.Cmd) {
 			// TODO: communicate unexpected failure. Might happen on non-unix
 			return
 		}
+		log.Printf("Exit %d\n", status.ExitStatus())
 		ch <- status.ExitStatus()
 	}
 	ch <- 0
