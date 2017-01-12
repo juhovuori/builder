@@ -13,7 +13,7 @@ func New(b build.Build) (Executor, error) {
 	switch b.ExecutorType() {
 	case "fork":
 		e := forkExecutor{
-			Dir:       "/tmp/builder",
+			Dir:       tmpFilename(),
 			ScriptURL: b.Script(),
 		}
 		return &e, nil
