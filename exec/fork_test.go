@@ -13,6 +13,7 @@ func TestForkExecutor(t *testing.T) {
 		{"testdata/success.sh", 0},
 		{"testdata/fail.sh", 1},
 		//TODO: pwd test
+		//TODO test stdout/stderr redirection
 	}
 	for _, c := range cases {
 		dir := tmpFilename()

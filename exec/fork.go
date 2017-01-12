@@ -20,6 +20,8 @@ type forkExecutor struct {
 }
 
 const scriptfilename = "script"
+const stdoutfilename = "stdout"
+const stderrfilename = "stderr"
 
 func (f *forkExecutor) Run() (<-chan int, error) {
 	var err error
@@ -55,18 +57,30 @@ func (f *forkExecutor) copyScript() error {
 }
 
 func (f *forkExecutor) run(ch chan<- int) error {
+	var err error
 	filename := path.Join(f.Dir, scriptfilename)
+	stdout := path.Join(f.Dir, stdoutfilename)
+	stderr := path.Join(f.Dir, stderrfilename)
 	args := []string{}
 	cmd := exec.Command(filename, args...)
 	cmd.Dir = f.Dir
+	cmd.Stdin = nil
+	if cmd.Stdout, err = os.Create(stdout); err != nil {
+		return err
+	}
+	if cmd.Stderr, err = os.Create(stderr); err != nil {
+		return err
+	}
 	if err := cmd.Start(); err != nil {
 		return err
 	}
 	go f.monitor(ch, cmd)
+	log.Printf("Executor %+v\n", f)
 	return nil
 }
 
 func (f *forkExecutor) monitor(ch chan<- int, cmd *exec.Cmd) {
+	exitStatus := 0
 	if err := cmd.Wait(); err != nil {
 		var exitErr *exec.ExitError
 		var status syscall.WaitStatus
@@ -81,8 +95,8 @@ func (f *forkExecutor) monitor(ch chan<- int, cmd *exec.Cmd) {
 			// TODO: communicate unexpected failure. Might happen on non-unix
 			return
 		}
-		log.Printf("Exit %d\n", status.ExitStatus())
-		ch <- status.ExitStatus()
+		exitStatus = status.ExitStatus()
 	}
-	ch <- 0
+	log.Printf("Exit %d\n", exitStatus)
+	ch <- exitStatus
 }

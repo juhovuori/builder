@@ -1,4 +1,5 @@
 #!/bin/bash
 
-echo moe>moe
+echo moe
+echo fail >&2
 
