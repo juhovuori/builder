@@ -5,6 +5,7 @@ type nopExecutor struct{}
 
 func (f *nopExecutor) Run() (<-chan int, error) {
 	c := make(chan int)
+	go func() { c <- 0 }()
 	return c, nil
 }
 
