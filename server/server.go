@@ -38,17 +38,16 @@ func (s echoServer) setupRouteHandlers() error {
 
 func (s echoServer) errorHandler(err error, c echo.Context) {
 	code := http.StatusInternalServerError
-	msg := http.StatusText(code)
+	msg := err.Error()
 	if he, ok := err.(*echo.HTTPError); ok {
 		code = he.Code
-		msg = he.Message
 	}
 	if !c.Response().Committed {
 		if c.Request().Method == echo.HEAD { // Issue #608
 			c.NoContent(code)
 		} else {
-			err := serverError{code, msg}
-			c.JSON(code, err)
+			se := serverError{code, msg}
+			c.JSON(code, se)
 		}
 	}
 	s.echo.Logger.Error(err)
