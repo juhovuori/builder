@@ -32,8 +32,8 @@ func (c *container) Project(projectID string) (Project, error) {
 	return nil, ErrNotFound
 }
 
-// New creates a new project manager
-func New(cfg ProjectsConfig) (Container, error) {
+// NewContainer creates a new project manager
+func NewContainer(cfg ProjectsConfig) (Container, error) {
 	c := &container{}
 	c.Configure(cfg.Projects())
 	return c, nil

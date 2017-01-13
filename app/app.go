@@ -54,7 +54,7 @@ func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 
 // New creates a new App from configuration
 func New(cfg Config) (App, error) {
-	projects, err := project.New(cfg)
+	projects, err := project.NewContainer(cfg)
 	if err != nil {
 		return nil, err
 	}
