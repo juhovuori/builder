@@ -33,9 +33,9 @@ type defaultProject struct {
 	Purl         string `json:"url"`
 	Pmd5         string `json:"id"`
 	Perr         error  `json:"error"`
-	Pname        string `hcl:"name"`
-	Pdescription string `hcl:"description"`
-	Pscript      string `hcl:"script"`
+	Pname        string `json:"name" hcl:"name"`
+	Pdescription string `json:"description" hcl:"description"`
+	Pscript      string `json:"script" hcl:"script"`
 }
 
 func (p *defaultProject) URL() string {
