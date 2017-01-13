@@ -11,7 +11,7 @@ import (
 // Config is the server configuration container
 type Config interface {
 	ServerAddress() string
-	project.ProjectsConfig
+	project.Config
 	Store() storeCfg
 }
 

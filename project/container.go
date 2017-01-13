@@ -1,5 +1,7 @@
 package project
 
+import "log"
+
 // Container is the project manager
 type Container interface {
 	Configure([]string)
@@ -7,23 +9,26 @@ type Container interface {
 	Project(string) (Project, error)
 }
 
-type container struct {
+type defaultContainer struct {
 	projects []Project
 }
 
-func (c *container) Configure(URLs []string) {
+func (c *defaultContainer) Configure(URLs []string) {
 	// TODO: reconfiguration
 	for _, URL := range URLs {
-		project := newProject(URL)
+		project, err := NewProject(URL)
+		if err != nil {
+			log.Printf("Could not create project %s: %v\n", URL, err)
+		}
 		c.projects = append(c.projects, project)
 	}
 }
 
-func (c *container) Projects() []Project {
+func (c *defaultContainer) Projects() []Project {
 	return c.projects
 }
 
-func (c *container) Project(projectID string) (Project, error) {
+func (c *defaultContainer) Project(projectID string) (Project, error) {
 	for _, pr := range c.projects {
 		if pr.ID() == projectID {
 			return pr, nil
@@ -33,8 +38,8 @@ func (c *container) Project(projectID string) (Project, error) {
 }
 
 // NewContainer creates a new project manager
-func NewContainer(cfg ProjectsConfig) (Container, error) {
-	c := &container{}
+func NewContainer(cfg Config) (Container, error) {
+	c := &defaultContainer{}
 	c.Configure(cfg.Projects())
 	return c, nil
 }
