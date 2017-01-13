@@ -16,7 +16,7 @@ type App interface {
 }
 
 type defaultApp struct {
-	projects project.Projects
+	projects project.Container
 	cfg      Config
 }
 
