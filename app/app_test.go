@@ -16,7 +16,7 @@ func TestNewFromFilename(t *testing.T) {
 		{"testdata/nothing-here.hcl", "open testdata/nothing-here.hcl: no such file or directory"},
 	}
 	for _, c := range cases {
-		cfg, err := NewFromFilename(c.filename)
+		cfg, err := NewFromURL(c.filename)
 		if fmt.Sprintf("%v", err) != c.err {
 			t.Errorf("Got %v, expected %v\n", err, c.err)
 		}

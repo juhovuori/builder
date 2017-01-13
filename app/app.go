@@ -65,8 +65,8 @@ func New(cfg Config) (App, error) {
 	return newApp, nil
 }
 
-// NewFromFilename creates a new App from configuration filename
-func NewFromFilename(filename string) (App, error) {
+// NewFromURL creates a new App from configuration filename
+func NewFromURL(filename string) (App, error) {
 	cfg, err := NewConfig(filename)
 	if err != nil {
 		return nil, err

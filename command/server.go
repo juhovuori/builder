@@ -45,7 +45,7 @@ func (cmd *Server) Run(args []string) int {
 		configFile = wd + "/builder.hcl"
 	}
 
-	app, err := app.NewFromFilename(configFile)
+	app, err := app.NewFromURL(configFile)
 	if err != nil {
 		log.Println("Unable to start application", err.Error())
 		return 1
