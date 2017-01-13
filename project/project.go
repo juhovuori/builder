@@ -64,18 +64,13 @@ func (p *defaultProject) Script() string {
 
 func fetchConfig(filename string) (string, error) {
 	bytes, err := fetcher.Fetch(filename)
-	if err != nil {
-		return "", err
-	}
 	return string(bytes), err
 }
 
 func newProject(config string, URL string, err error) (*defaultProject, error) {
 	var p defaultProject
 	if err == nil {
-		if err = hcl.Decode(&p, config); err != nil {
-			return &p, fmt.Errorf("Failed to parse project configuration: %v", err)
-		}
+		err = hcl.Decode(&p, config)
 	}
 	MD5 := md5.Sum([]byte(URL))
 	p.Purl = URL
