@@ -7,11 +7,11 @@ import (
 )
 
 func (s *echoServer) hRoot(c echo.Context) error {
-	return c.String(http.StatusOK, "Hello, World!")
+	return c.JSON(http.StatusOK, "Hello, World!")
 }
 
 func (s *echoServer) hHealth(c echo.Context) error {
-	return c.String(http.StatusInternalServerError, "Not implemented.")
+	return c.JSON(http.StatusInternalServerError, "Not implemented.")
 }
 
 func (s *echoServer) hVersion(c echo.Context) error {
@@ -29,19 +29,19 @@ func (s *echoServer) hTriggerBuild(c echo.Context) error {
 }
 
 func (s *echoServer) hCreateBuild(c echo.Context) error {
-	return c.String(http.StatusInternalServerError, "Not implemented.")
+	return c.JSON(http.StatusInternalServerError, "Not implemented.")
 }
 
 func (s *echoServer) hListBuilds(c echo.Context) error {
-	return c.String(http.StatusInternalServerError, "Not implemented.")
+	return c.JSON(http.StatusInternalServerError, "Not implemented.")
 }
 
 func (s *echoServer) hGetBuild(c echo.Context) error {
-	return c.String(http.StatusInternalServerError, "Not implemented.")
+	return c.JSON(http.StatusInternalServerError, "Not implemented.")
 }
 
 func (s *echoServer) hAddStage(c echo.Context) error {
-	return c.String(http.StatusInternalServerError, "Not implemented.")
+	return c.JSON(http.StatusInternalServerError, "Not implemented.")
 }
 
 func (s *echoServer) hListProjects(c echo.Context) error {
