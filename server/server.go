@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/juhovuori/builder/app"
+	"github.com/juhovuori/builder/project"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
@@ -41,6 +42,8 @@ func (s echoServer) errorHandler(err error, c echo.Context) {
 	msg := err.Error()
 	if he, ok := err.(*echo.HTTPError); ok {
 		code = he.Code
+	} else if err == project.ErrNotFound {
+		code = 404
 	}
 	if !c.Response().Committed {
 		if c.Request().Method == echo.HEAD { // Issue #608
