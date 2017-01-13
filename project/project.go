@@ -11,7 +11,7 @@ import (
 // Project represents a single managed project
 type Project interface {
 	Manager
-	ProjectConfig
+	Attributes
 }
 
 // Manager represents the manager of a single project
@@ -21,8 +21,8 @@ type Manager interface {
 	Err() error
 }
 
-// ProjectConfig represents the configuration of a single project
-type ProjectConfig interface {
+// Attributes represents the configuration of a single project
+type Attributes interface {
 	Name() string
 	Description() string
 	Script() string
