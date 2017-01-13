@@ -1,6 +1,7 @@
 package fetcher
 
 import (
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -36,6 +37,9 @@ func FetchReadCloser(URL string) (io.ReadCloser, error) {
 	resp, err := http.Get(URL)
 	if err != nil {
 		return nil, err
+	}
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("HTTP %d", resp.StatusCode)
 	}
 	return resp.Body, nil
 }
