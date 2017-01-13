@@ -10,24 +10,24 @@ import (
 	"github.com/mitchellh/cli"
 )
 
-// Command is the server command
-type Command struct{}
+// Server is the server command
+type Server struct{}
 
 // Help returns long-form help text that includes the command-line
 // usage, a brief few sentences explaining the function of the command,
 // and the complete list of flags the command accepts.
-func (cmd *Command) Help() string {
+func (cmd *Server) Help() string {
 	return "builder server [-f <configuration.hcl>]"
 }
 
 // Run runs the actual command with the given CLI instance and
 // command-line arguments. It returns the exit status when it is
 // finished.
-func (cmd *Command) Run(args []string) int {
+func (cmd *Server) Run(args []string) int {
 	var configFile string
 	cmdFlags := flag.NewFlagSet("server", flag.ContinueOnError)
 	cmdFlags.Usage = func() { log.Println(cmd.Help()) }
-	cmdFlags.StringVar((&configFile), "config-file", "./builder.hcl", "HCL file to read config from")
+	cmdFlags.StringVar((&configFile), "f", "./builder.hcl", "HCL file to read config from")
 
 	if err := cmdFlags.Parse(args); err != nil {
 		return 1
@@ -65,12 +65,12 @@ func (cmd *Command) Run(args []string) int {
 }
 
 // Synopsis returns a one-line, short synopsis of the command.
-func (cmd *Command) Synopsis() string {
+func (cmd *Server) Synopsis() string {
 	return "runs a server"
 }
 
 // ServerFactory creates a server command for CLI
 func ServerFactory() (cli.Command, error) {
-	cmd := Command{}
+	cmd := Server{}
 	return &cmd, nil
 }
