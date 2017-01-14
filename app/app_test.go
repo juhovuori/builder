@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/juhovuori/builder/build"
 	"github.com/juhovuori/builder/project"
 )
 
@@ -30,11 +31,13 @@ func TestNewFromFilename(t *testing.T) {
 func TestTriggerBuild(t *testing.T) {
 	projectID := "id"
 	projectURL := "1"
+	builds, _ := build.NewContainer("memory")
 	projects := mockP{projectID}
 	cfg := builderCfg{Projects: []string{projectURL}}
 	config := cfgManager{&cfg}
 	app := defaultApp{
 		projects,
+		builds,
 		config,
 	}
 	b, err := app.TriggerBuild(projectID)

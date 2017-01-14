@@ -21,7 +21,7 @@ func (c memoryContainer) Build(ID string) (Build, error) {
 }
 
 func (c memoryContainer) New(b Buildable) (Build, error) {
-	return nil, errNotImplemented
+	return New(b)
 }
 
 func (c memoryContainer) AddStage(ID string, state State) error {

@@ -17,6 +17,7 @@ type App interface {
 
 type defaultApp struct {
 	projects project.Container
+	builds   build.Container
 	cfg      Config
 }
 
@@ -37,7 +38,7 @@ func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 	if err != nil {
 		return nil, err
 	}
-	b, err := build.New(p)
+	b, err := a.builds.New(p)
 	if err != nil {
 		return nil, err
 	}
@@ -58,8 +59,13 @@ func New(cfg Config) (App, error) {
 	if err != nil {
 		return nil, err
 	}
+	builds, err := build.NewContainer("memory")
+	if err != nil {
+		return nil, err
+	}
 	newApp := defaultApp{
 		projects,
+		builds,
 		cfg,
 	}
 	return newApp, nil
