@@ -50,7 +50,7 @@ func TestNewFromStringAndAccessors(t *testing.T) {
 	description = "description"
 	script = "script"
 	`
-	p, err := NewFromString(cfg)
+	p, err := New(cfg)
 	if err != nil {
 		t.Errorf("Unexpected error %v\n", err)
 	}

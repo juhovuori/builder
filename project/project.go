@@ -85,7 +85,7 @@ func NewProject(URL string) (Project, error) {
 	return newProject(config, URL, err)
 }
 
-// NewFromString creates a new project from configuration string
-func NewFromString(config string) (Project, error) {
+// New creates a new project from configuration string
+func New(config string) (Project, error) {
 	return newProject(config, "", nil)
 }

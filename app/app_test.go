@@ -31,7 +31,10 @@ func TestNewFromFilename(t *testing.T) {
 func TestTriggerBuild(t *testing.T) {
 	projectID := "id"
 	projectURL := "1"
-	builds, _ := build.NewContainer("memory")
+	builds, err := build.NewContainer("memory")
+	if err != nil {
+		t.Fatal(err)
+	}
 	projects := mockP{projectID}
 	cfg := builderCfg{Projects: []string{projectURL}}
 	config := cfgManager{&cfg}
