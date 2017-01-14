@@ -17,6 +17,4 @@ var (
 
 	// ErrStageOrder is returned when stage is added in an invalid order.
 	ErrStageOrder = errors.New("Invalid stage order")
-
-	errNotImplemented = errors.New("Not implemented")
 )

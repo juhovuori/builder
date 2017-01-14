@@ -5,7 +5,7 @@ type Container interface {
 	Builds() []string
 	Build(ID string) (Build, error)
 	New(b Buildable) (Build, error)
-	AddStage(ID string, state State) error
+	AddStage(buildID string, stage Stage) error
 }
 
 type memoryContainer struct {
@@ -37,8 +37,13 @@ func (c memoryContainer) New(b Buildable) (Build, error) {
 	return build, nil
 }
 
-func (c memoryContainer) AddStage(ID string, state State) error {
-	return errNotImplemented
+func (c memoryContainer) AddStage(buildID string, stage Stage) error {
+	b, err := c.Build(buildID)
+	if err != nil {
+		return err
+	}
+	b.AddStage(stage)
+	return nil
 }
 
 // NewContainer creates a new build container

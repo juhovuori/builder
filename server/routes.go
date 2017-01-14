@@ -3,6 +3,7 @@ package server
 import (
 	"net/http"
 
+	"github.com/juhovuori/builder/build"
 	"github.com/labstack/echo"
 )
 
@@ -47,7 +48,16 @@ func (s *echoServer) hGetBuild(c echo.Context) error {
 }
 
 func (s *echoServer) hAddStage(c echo.Context) error {
-	return c.JSON(http.StatusInternalServerError, "Not implemented.")
+	buildID := c.Param("id")
+	stage := build.Stage{
+		Type: build.StageType(c.QueryParam("type")),
+		Name: c.QueryParam("name"),
+	}
+	err := s.app.AddStage(buildID, stage)
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, "OK")
 }
 
 func (s *echoServer) hListProjects(c echo.Context) error {

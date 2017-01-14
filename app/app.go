@@ -1,6 +1,8 @@
 package app
 
 import (
+	"time"
+
 	"github.com/juhovuori/builder/build"
 	"github.com/juhovuori/builder/exec"
 	"github.com/juhovuori/builder/project"
@@ -15,6 +17,7 @@ type App interface {
 	Builds() []string
 	Build(build string) (build.Build, error)
 	TriggerBuild(projectID string) (build.Build, error)
+	AddStage(buildID string, stage build.Stage) error
 }
 
 type defaultApp struct {
@@ -52,7 +55,25 @@ func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 	if err != nil {
 		return nil, err
 	}
+	created := build.Stage{
+		Type:      build.CREATED,
+		Name:      "created",
+		Timestamp: time.Now().Unix(),
+	}
+	err = a.builds.AddStage(b.ID(), created)
+	if err != nil {
+		return nil, err
+	}
 	e, err := exec.New(b)
+	if err != nil {
+		return nil, err
+	}
+	started := build.Stage{
+		Type:      build.STARTED,
+		Name:      "started",
+		Timestamp: time.Now().Unix(),
+	}
+	err = a.builds.AddStage(b.ID(), started)
 	if err != nil {
 		return nil, err
 	}
@@ -61,6 +82,12 @@ func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 		return nil, err
 	}
 	return b, nil
+}
+
+//AddStage adds a build stage
+func (a defaultApp) AddStage(buildID string, stage build.Stage) error {
+	stage.Timestamp = time.Now().Unix()
+	return a.builds.AddStage(buildID, stage)
 }
 
 // New creates a new App from configuration

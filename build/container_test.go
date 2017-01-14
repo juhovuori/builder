@@ -25,6 +25,6 @@ func TestNewContainer(t *testing.T) {
 		container.New(b)
 		container.Builds()
 		container.Build("")
-		container.AddStage("", "")
+		container.AddStage("", Stage{})
 	}
 }
