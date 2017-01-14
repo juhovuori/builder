@@ -11,6 +11,7 @@ import (
 // Config is the server configuration container
 type Config interface {
 	ServerAddress() string
+	URL() string
 	project.Config
 	Store() storeCfg
 }
@@ -22,6 +23,7 @@ type storeCfg struct {
 
 type builderCfg struct {
 	ServerAddress string   `hcl:"bind_addr"`
+	URL           string   `hcl:"url"`
 	Projects      []string `hcl:"projects"`
 	Store         storeCfg `hcl:"state_store"`
 }
@@ -32,6 +34,10 @@ type cfgManager struct {
 
 func (cm cfgManager) ServerAddress() string {
 	return cm.cfg.ServerAddress
+}
+
+func (cm cfgManager) URL() string {
+	return cm.cfg.URL
 }
 
 func (cm cfgManager) Projects() []string {

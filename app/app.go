@@ -1,6 +1,9 @@
 package app
 
 import (
+	"fmt"
+	"log"
+	"os"
 	"time"
 
 	"github.com/juhovuori/builder/build"
@@ -64,7 +67,11 @@ func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 	if err != nil {
 		return nil, err
 	}
-	e, err := exec.New(b)
+	env := []string{
+		fmt.Sprintf("BUILD_ID=%s", b.ID()),
+		fmt.Sprintf("URL=%s", a.cfg.URL()),
+	}
+	e, err := exec.NewWithEnvironment(b, append(os.Environ(), env...))
 	if err != nil {
 		return nil, err
 	}
@@ -77,10 +84,29 @@ func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 	if err != nil {
 		return nil, err
 	}
-	_, err = e.Run()
+	ch, err := e.Run()
 	if err != nil {
 		return nil, err
 	}
+	go (func() {
+		exitStatus := <-ch
+		log.Printf("Exit %d\n", exitStatus)
+		if !b.Completed() {
+			t := build.SUCCESS
+			if exitStatus != 0 {
+				t = build.FAILURE
+			}
+			lastStage := build.Stage{
+				Type:      t,
+				Name:      "end-of-script",
+				Timestamp: time.Now().Unix(),
+			}
+			err := b.AddStage(lastStage)
+			if err != nil {
+				log.Printf("Could not add final stage.%v\n", err)
+			}
+		}
+	})()
 	return b, nil
 }
 

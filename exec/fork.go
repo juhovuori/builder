@@ -83,7 +83,6 @@ func (f *forkExecutor) run(ch chan<- int) error {
 }
 
 func (f *forkExecutor) monitor(ch chan<- int, cmd *exec.Cmd) {
-	exitStatus := 0
 	if err := cmd.Wait(); err != nil {
 		var exitErr *exec.ExitError
 		var status syscall.WaitStatus
@@ -98,8 +97,7 @@ func (f *forkExecutor) monitor(ch chan<- int, cmd *exec.Cmd) {
 			// TODO: communicate unexpected failure. Might happen on non-unix
 			return
 		}
-		exitStatus = status.ExitStatus()
+		ch <- status.ExitStatus()
 	}
-	log.Printf("Exit %d\n", exitStatus)
-	ch <- exitStatus
+	ch <- 0
 }
