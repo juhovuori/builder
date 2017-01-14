@@ -1,10 +1,13 @@
 package build
 
-// Buildable is type Buildable interface {
+// Buildable can be built interface {
 type Buildable interface {
 	ID() string
 	Script() string
 }
+
+// State is the state of a build
+type State string
 
 // Build describes a single build
 type Build interface {
