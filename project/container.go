@@ -5,12 +5,12 @@ import "log"
 // Container is the project manager
 type Container interface {
 	Configure([]string)
-	Projects() []Project
+	Projects() []string
 	Project(string) (Project, error)
 }
 
 type defaultContainer struct {
-	projects []Project
+	projects map[string]Project
 }
 
 func (c *defaultContainer) Configure(URLs []string) {
@@ -20,26 +20,34 @@ func (c *defaultContainer) Configure(URLs []string) {
 		if err != nil {
 			log.Printf("Could not create project %s: %v\n", URL, err)
 		}
-		c.projects = append(c.projects, project)
+		id := project.ID()
+		if _, ok := c.projects[id]; ok {
+			log.Printf("Duplicate project %s: %v\n", URL, err)
+			// TODO: return error
+		}
+		c.projects[id] = project
 	}
 }
 
-func (c *defaultContainer) Projects() []Project {
-	return c.projects
+func (c *defaultContainer) Projects() []string {
+	projects := []string{}
+	for ID := range c.projects {
+		projects = append(projects, ID)
+	}
+	return projects
 }
 
 func (c *defaultContainer) Project(projectID string) (Project, error) {
-	for _, pr := range c.projects {
-		if pr.ID() == projectID {
-			return pr, nil
-		}
+	p, ok := c.projects[projectID]
+	if !ok {
+		return nil, ErrNotFound
 	}
-	return nil, ErrNotFound
+	return p, nil
 }
 
 // NewContainer creates a new project manager
 func NewContainer(cfg Config) (Container, error) {
-	c := &defaultContainer{}
+	c := &defaultContainer{map[string]Project{}}
 	c.Configure(cfg.Projects())
 	return c, nil
 }

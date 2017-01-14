@@ -10,7 +10,7 @@ import (
 // frontends such as HTTP server or command line interface
 type App interface {
 	Config() Config
-	Projects() []project.Project
+	Projects() []string
 	Project(project string) (project.Project, error)
 	Builds() []string
 	Build(build string) (build.Build, error)
@@ -27,7 +27,7 @@ func (a defaultApp) Config() Config {
 	return a.cfg
 }
 
-func (a defaultApp) Projects() []project.Project {
+func (a defaultApp) Projects() []string {
 	return a.projects.Projects()
 }
 

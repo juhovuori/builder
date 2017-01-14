@@ -64,8 +64,8 @@ func (p mockP) ID() string          { return p.id }
 func (p mockP) Err() error          { return nil }
 
 func (p mockP) Configure([]string) {}
-func (p mockP) Projects() []project.Project {
-	return nil
+func (p mockP) Projects() []string {
+	return []string{p.id}
 }
 func (p mockP) Project(id string) (project.Project, error) {
 	if id == p.id {
