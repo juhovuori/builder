@@ -12,6 +12,8 @@ type App interface {
 	Config() Config
 	Projects() []project.Project
 	Project(project string) (project.Project, error)
+	Builds() []string
+	Build(build string) (build.Build, error)
 	TriggerBuild(projectID string) (build.Build, error)
 }
 
@@ -31,6 +33,14 @@ func (a defaultApp) Projects() []project.Project {
 
 func (a defaultApp) Project(project string) (project.Project, error) {
 	return a.projects.Project(project)
+}
+
+func (a defaultApp) Builds() []string {
+	return a.builds.Builds()
+}
+
+func (a defaultApp) Build(build string) (build.Build, error) {
+	return a.builds.Build(build)
 }
 
 func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {

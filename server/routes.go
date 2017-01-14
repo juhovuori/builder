@@ -33,11 +33,17 @@ func (s *echoServer) hCreateBuild(c echo.Context) error {
 }
 
 func (s *echoServer) hListBuilds(c echo.Context) error {
-	return c.JSON(http.StatusInternalServerError, "Not implemented.")
+	builds := s.app.Builds()
+	return c.JSON(http.StatusOK, builds)
 }
 
 func (s *echoServer) hGetBuild(c echo.Context) error {
-	return c.JSON(http.StatusInternalServerError, "Not implemented.")
+	buildID := c.Param("id")
+	b, err := s.app.Build(buildID)
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, b)
 }
 
 func (s *echoServer) hAddStage(c echo.Context) error {

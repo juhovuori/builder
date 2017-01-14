@@ -3,6 +3,9 @@ package build
 import "errors"
 
 var (
+	// ErrNotFound is returned when queried build does not exist
+	ErrNotFound = errors.New("Build not found")
+
 	// ErrNilProject is returned when a build is created with no project
 	ErrNilProject = errors.New("Project is nil")
 

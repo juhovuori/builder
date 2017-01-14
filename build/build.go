@@ -1,5 +1,7 @@
 package build
 
+import "github.com/satori/go.uuid"
+
 // Buildable can be built interface {
 type Buildable interface {
 	ID() string
@@ -61,8 +63,9 @@ func New(project Buildable) (Build, error) {
 	if project.Script() != "" {
 		e = "fork"
 	}
+	id := uuid.NewV4().String()
 	b := defaultBuild{
-		BID:           "",
+		BID:           id,
 		BProjectID:    project.ID(),
 		BScript:       project.Script(),
 		BExecutorType: e,
@@ -70,5 +73,4 @@ func New(project Buildable) (Build, error) {
 		BErr:          nil,
 	}
 	return &b, nil
-
 }

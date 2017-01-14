@@ -18,9 +18,13 @@ func TestNewContainer(t *testing.T) {
 		if c.err != nil {
 			continue
 		}
+		b, err := New(&mock{"1", "2"})
+		if err != nil {
+			t.Fatal(err)
+		}
+		container.New(b)
 		container.Builds()
 		container.Build("")
 		container.AddStage("", "")
-		container.New(nil)
 	}
 }

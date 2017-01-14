@@ -13,15 +13,28 @@ type memoryContainer struct {
 }
 
 func (c memoryContainer) Builds() []string {
-	return nil
+	builds := []string{}
+	for ID := range c.builds {
+		builds = append(builds, ID)
+	}
+	return builds
 }
 
 func (c memoryContainer) Build(ID string) (Build, error) {
-	return nil, errNotImplemented
+	build, ok := c.builds[ID]
+	if !ok {
+		return nil, ErrNotFound
+	}
+	return build, nil
 }
 
 func (c memoryContainer) New(b Buildable) (Build, error) {
-	return New(b)
+	build, err := New(b)
+	if err != nil {
+		return nil, err
+	}
+	c.builds[build.ID()] = build
+	return build, nil
 }
 
 func (c memoryContainer) AddStage(ID string, state State) error {
@@ -32,7 +45,7 @@ func (c memoryContainer) AddStage(ID string, state State) error {
 func NewContainer(t string) (Container, error) {
 	switch t {
 	case "memory":
-		return memoryContainer{}, nil
+		return memoryContainer{map[string]Build{}}, nil
 	default:
 		return nil, ErrInvalidContainerType
 	}

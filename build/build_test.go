@@ -20,7 +20,7 @@ func TestBuild(t *testing.T) {
 		if c.err != nil {
 			continue
 		}
-		if b.ID() != "" {
+		if len(b.ID()) != 36 {
 			t.Errorf("Wrong ID %v\n", b.ID())
 		}
 		if b.ExecutorType() != c.exec {
