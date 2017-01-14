@@ -17,7 +17,7 @@ func TestForkExecutor(t *testing.T) {
 	}
 	for _, c := range cases {
 		dir := tmpFilename()
-		e := forkExecutor{dir, c.script}
+		e := forkExecutor{dir, c.script, []string{}, []string{}}
 		ch, err := e.Run()
 		if err != nil {
 			t.Fatalf("Run returned error: %v\n", err)

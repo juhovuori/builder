@@ -1,6 +1,10 @@
 package exec
 
-import "github.com/juhovuori/builder/build"
+import (
+	"fmt"
+
+	"github.com/juhovuori/builder/build"
+)
 
 // Executor is a object that is capable of executing a build
 type Executor interface {
@@ -15,6 +19,8 @@ func New(b build.Build) (Executor, error) {
 		e := forkExecutor{
 			Dir:       tmpFilename(),
 			ScriptURL: b.Script(),
+			Args:      []string{},
+			Env:       []string{fmt.Sprintf("BUILD_ID=%s", b.ID())},
 		}
 		return &e, nil
 	case "nop":

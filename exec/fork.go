@@ -17,6 +17,8 @@ import (
 type forkExecutor struct {
 	Dir       string
 	ScriptURL string
+	Args      []string
+	Env       []string
 }
 
 const scriptfilename = "script"
@@ -61,10 +63,11 @@ func (f *forkExecutor) run(ch chan<- int) error {
 	filename := path.Join(f.Dir, scriptfilename)
 	stdout := path.Join(f.Dir, stdoutfilename)
 	stderr := path.Join(f.Dir, stderrfilename)
-	args := []string{}
-	cmd := exec.Command(filename, args...)
+	cmd := exec.Command(filename, f.Args...)
 	cmd.Dir = f.Dir
 	cmd.Stdin = nil
+	cmd.Env = append(os.Environ(), f.Env...)
+
 	if cmd.Stdout, err = os.Create(stdout); err != nil {
 		return err
 	}
