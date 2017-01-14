@@ -8,7 +8,7 @@ func TestNewContainer(t *testing.T) {
 		err error
 	}{
 		{"memory", nil},
-		{"invalid", ErrInvalidContainerType},
+		{"invalid", ErrContainerType},
 	}
 	for i, c := range cases {
 		container, err := NewContainer(c.t)

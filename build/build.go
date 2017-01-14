@@ -60,6 +60,15 @@ func (b *defaultBuild) Error() error {
 }
 
 func (b *defaultBuild) AddStage(stage Stage) error {
+	var previousStage *Stage
+	if len(b.Bstages) != 0 {
+		previousStage = &b.Bstages[len(b.Bstages)-1]
+	}
+	err := stage.ValidateWithPredecessor(previousStage)
+	if err != nil {
+		return err
+	}
+	b.Bstages = append(b.Bstages, stage)
 	return nil
 }
 

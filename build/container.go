@@ -47,6 +47,6 @@ func NewContainer(t string) (Container, error) {
 	case "memory":
 		return memoryContainer{map[string]Build{}}, nil
 	default:
-		return nil, ErrInvalidContainerType
+		return nil, ErrContainerType
 	}
 }
