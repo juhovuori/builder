@@ -19,15 +19,16 @@ type Build interface {
 	Script() string
 	Completed() bool
 	Error() error
+	AddStage(stage Stage) error
 }
 
 type defaultBuild struct {
-	BID           string `json:"id"`
-	BProjectID    string `json:"project-id"`
-	BScript       string `json:"script"`
-	BExecutorType string `json:"executor-type"`
-	BCompleted    bool   `json:"completed"`
-	BErr          error  `json:"error"`
+	BID           string  `json:"id"`
+	BProjectID    string  `json:"project-id"`
+	BScript       string  `json:"script"`
+	BExecutorType string  `json:"executor-type"`
+	BErr          error   `json:"error"`
+	Bstages       []Stage `json:"stages"`
 }
 
 func (b *defaultBuild) ID() string {
@@ -47,11 +48,19 @@ func (b *defaultBuild) Script() string {
 }
 
 func (b *defaultBuild) Completed() bool {
-	return b.BCompleted
+	if len(b.Bstages) == 0 {
+		return false
+	}
+	lastStage := b.Bstages[len(b.Bstages)-1]
+	return lastStage.Type == SUCCESS || lastStage.Type == FAILURE
 }
 
 func (b *defaultBuild) Error() error {
 	return b.BErr
+}
+
+func (b *defaultBuild) AddStage(stage Stage) error {
+	return nil
 }
 
 // New creates a new build
@@ -69,8 +78,8 @@ func New(project Buildable) (Build, error) {
 		BProjectID:    project.ID(),
 		BScript:       project.Script(),
 		BExecutorType: e,
-		BCompleted:    false,
 		BErr:          nil,
+		Bstages:       []Stage{},
 	}
 	return &b, nil
 }
