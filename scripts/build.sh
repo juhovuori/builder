@@ -4,6 +4,7 @@ export GOPATH=$(pwd)
 go get -d github.com/juhovuori/builder
 cd src/github.com/juhovuori/builder
 make build
+make test-v
 mv builder ~
 cp builder.hcl ~
 cp project.hcl ~

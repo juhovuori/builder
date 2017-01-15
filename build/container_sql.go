@@ -126,7 +126,7 @@ func (c *sqlContainer) Build(ID string) (Build, error) {
 		if err != nil {
 			return nil, err
 		}
-		build.Boutput = append(build.Boutput, data...)
+		build.output = append(build.output, data...)
 	}
 
 	return &build, nil

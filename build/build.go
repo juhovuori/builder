@@ -31,7 +31,7 @@ type defaultBuild struct {
 	BExecutorType string  `json:"executor-type"`
 	BErr          error   `json:"error"`
 	Bstages       []Stage `json:"stages"`
-	Boutput       []byte
+	output        []byte
 }
 
 func (b *defaultBuild) ID() string {
@@ -76,12 +76,12 @@ func (b *defaultBuild) AddStage(stage Stage) error {
 }
 
 func (b *defaultBuild) Output(output []byte) error {
-	b.Boutput = append(b.Boutput, output...)
+	b.output = append(b.output, output...)
 	return nil
 }
 
 func (b *defaultBuild) Stdout() []byte {
-	return b.Boutput
+	return b.output
 }
 
 // New creates a new build
