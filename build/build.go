@@ -1,6 +1,10 @@
 package build
 
-import "github.com/satori/go.uuid"
+import (
+	"time"
+
+	"github.com/satori/go.uuid"
+)
 
 // Buildable can be built interface {
 type Buildable interface {
@@ -19,6 +23,7 @@ type Build interface {
 	Script() string
 	Completed() bool
 	Stages() []Stage
+	Created() int64
 	AddStage(stage Stage) error
 	Output([]byte) error
 	Stdout() []byte
@@ -29,7 +34,7 @@ type defaultBuild struct {
 	BProjectID    string  `json:"project-id"`
 	BScript       string  `json:"script"`
 	BExecutorType string  `json:"executor-type"`
-	BErr          error   `json:"error"`
+	BCreated      int64   `json:"created"`
 	Bstages       []Stage `json:"stages"`
 	output        []byte
 }
@@ -44,6 +49,10 @@ func (b *defaultBuild) ExecutorType() string {
 
 func (b *defaultBuild) ProjectID() string {
 	return b.BProjectID
+}
+
+func (b *defaultBuild) Created() int64 {
+	return b.BCreated
 }
 
 func (b *defaultBuild) Script() string {
@@ -93,13 +102,19 @@ func New(project Buildable) (Build, error) {
 	if project.Script() != "" {
 		e = "fork"
 	}
+	return NewWithExecutor(project, e)
+}
+
+// NewWithExecutor creates a new build with a custom executor
+func NewWithExecutor(project Buildable, e string) (Build, error) {
 	id := uuid.NewV4().String()
+	created := time.Now().UnixNano()
 	b := defaultBuild{
 		BID:           id,
 		BProjectID:    project.ID(),
 		BScript:       project.Script(),
 		BExecutorType: e,
-		BErr:          nil,
+		BCreated:      created,
 		Bstages:       []Stage{},
 	}
 	return &b, nil

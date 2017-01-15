@@ -1,6 +1,9 @@
 package build
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
 func TestContainer(t *testing.T) {
 	cases := []struct {
@@ -36,10 +39,24 @@ func TestContainer(t *testing.T) {
 		if len(bs) != 0 {
 			t.Errorf("%d: Expected empty container, got %d builds\n", i, len(bs))
 		}
+		before := time.Now().UnixNano()
 		newB, err := container.New(b)
 		if err != nil {
 			t.Errorf("%d: Unexpected error %v\n", i, err)
 		}
+		after := time.Now().UnixNano()
+
+		newB, err = container.Build(newB.ID())
+		if err != nil {
+			t.Errorf("%d: Unexpected error %v\n", i, err)
+		}
+		if len(newB.Stages()) != 0 {
+			t.Errorf("%d: Expected %d stages, got %d\n", i, 0, len(newB.Stages()))
+		}
+		if newB.Created() < before || newB.Created() > after {
+			t.Errorf("%d: before %d, created %d, after %d\n", i, before, newB.Created(), after)
+		}
+
 		container.Builds()
 		bs = container.Builds()
 		if len(bs) != 1 {
@@ -47,26 +64,23 @@ func TestContainer(t *testing.T) {
 		}
 
 		stages := []Stage{
-			Stage{},
-			Stage{Type: CREATED},
 			Stage{Type: STARTED},
 			Stage{Type: PROGRESS},
 			Stage{Type: PROGRESS},
 			Stage{Type: SUCCESS},
 		}
 		for j, s := range stages {
-			if j != 0 {
-				err = container.AddStage(newB.ID(), s)
-				if err != nil {
-					t.Errorf("%d, %d: Unexpected error %v\n", i, j, err)
-				}
+			err = container.AddStage(newB.ID(), s)
+			if err != nil {
+				t.Errorf("%d, %d: Unexpected error %v\n", i, j, err)
+				break
 			}
 			newB, err = container.Build(newB.ID())
 			if err != nil {
 				t.Errorf("%d, %d: Unexpected error %v\n", i, j, err)
 			}
-			if len(newB.Stages()) != j {
-				t.Errorf("%d, %d: Expected %d stages, got %d\n", i, j, j, len(newB.Stages()))
+			if len(newB.Stages()) != j+1 {
+				t.Errorf("%d, %d: Expected %d stages, got %d\n", i, j+1, j, len(newB.Stages()))
 			}
 		}
 		err = container.Output(newB.ID(), []byte("foo"))

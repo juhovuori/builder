@@ -59,15 +59,6 @@ func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 	if err != nil {
 		return nil, err
 	}
-	created := build.Stage{
-		Type:      build.CREATED,
-		Name:      "created",
-		Timestamp: time.Now().Unix(),
-	}
-	err = a.builds.AddStage(b.ID(), created)
-	if err != nil {
-		return nil, err
-	}
 	env := []string{
 		fmt.Sprintf("BUILD_ID=%s", b.ID()),
 		fmt.Sprintf("URL=%s", a.cfg.URL()),
@@ -79,7 +70,7 @@ func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 	started := build.Stage{
 		Type:      build.STARTED,
 		Name:      "started",
-		Timestamp: time.Now().Unix(),
+		Timestamp: time.Now().UnixNano(),
 	}
 	err = a.builds.AddStage(b.ID(), started)
 	if err != nil {
@@ -123,7 +114,7 @@ func (a defaultApp) monitorExit(buildID string, ch <-chan int) {
 		lastStage := build.Stage{
 			Type:      t,
 			Name:      "end-of-script",
-			Timestamp: time.Now().Unix(),
+			Timestamp: time.Now().UnixNano(),
 		}
 		err := a.builds.AddStage(buildID, lastStage)
 		if err != nil {
@@ -134,7 +125,7 @@ func (a defaultApp) monitorExit(buildID string, ch <-chan int) {
 
 //AddStage adds a build stage
 func (a defaultApp) AddStage(buildID string, stage build.Stage) error {
-	stage.Timestamp = time.Now().Unix()
+	stage.Timestamp = time.Now().UnixNano()
 	return a.builds.AddStage(buildID, stage)
 }
 

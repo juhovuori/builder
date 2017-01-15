@@ -43,6 +43,7 @@ func (m mock) ExecutorType() string         { return m.t }
 func (m mock) ProjectID() string            { return "" }
 func (m mock) Completed() bool              { return false }
 func (m mock) Stages() []build.Stage        { return nil }
+func (m mock) Created() int64               { return 0 }
 func (m mock) Script() string               { return "" }
 func (m mock) AddStage(s build.Stage) error { return nil }
 func (m mock) Output([]byte) error          { return nil }

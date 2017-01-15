@@ -8,10 +8,7 @@ func TestStage(t *testing.T) {
 		predecessor *Stage
 		err         error
 	}{
-		{Stage{Type: CREATED}, nil, nil},
-		{Stage{Type: CREATED}, &Stage{Type: CREATED}, ErrStageOrder},
-		{Stage{Type: STARTED}, nil, ErrStageOrder},
-		{Stage{Type: STARTED}, &Stage{Type: CREATED}, nil},
+		{Stage{Type: STARTED}, nil, nil},
 		{Stage{Type: STARTED}, &Stage{Type: PROGRESS}, ErrStageOrder},
 		{Stage{Type: PROGRESS}, nil, ErrStageOrder},
 		{Stage{Type: PROGRESS}, &Stage{Type: PROGRESS}, nil},

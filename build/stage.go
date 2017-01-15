@@ -4,8 +4,6 @@ package build
 type StageType string
 
 const (
-	// CREATED StageType
-	CREATED = StageType("created")
 	// STARTED StageType
 	STARTED = StageType("started")
 	// PROGRESS StageType
@@ -21,8 +19,6 @@ const (
 // Validate returns true for a valid StageType
 func (t StageType) Validate() error {
 	switch t {
-	case CREATED:
-		return nil
 	case STARTED:
 		return nil
 	case PROGRESS:
@@ -55,12 +51,8 @@ func (s Stage) ValidateWithPredecessor(predecessor *Stage) error {
 		return ErrStageOrder
 	}
 	switch s.Type {
-	case CREATED:
-		if predecessor == nil {
-			return nil
-		}
 	case STARTED:
-		if predecessor != nil && predecessor.Type == CREATED {
+		if predecessor == nil {
 			return nil
 		}
 	case PROGRESS:
