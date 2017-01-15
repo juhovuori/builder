@@ -9,16 +9,20 @@ import (
 
 func TestNew(t *testing.T) {
 	cases := []struct {
-		b   build.Build
+		e   string
 		t   string
 		err error
 	}{
-		{mock{"fork"}, "*exec.forkExecutor", nil},
-		{mock{"nop"}, "*exec.nopExecutor", nil},
-		{mock{""}, "", ErrInvalidExecutor},
+		{"fork", "*exec.forkExecutor", nil},
+		{"nop", "*exec.nopExecutor", nil},
+		{"", "", ErrInvalidExecutor},
 	}
 	for _, c := range cases {
-		e, err := New(c.b)
+		b, err := build.NewWithExecutorType(mock{}, c.e)
+		if err != nil {
+			t.Errorf("Unexpected error %v\n", err)
+		}
+		e, err := New(b)
 		if err != c.err {
 			t.Errorf("Got %v, expect %+v\n", err, c.err)
 		}
@@ -33,18 +37,7 @@ func TestNew(t *testing.T) {
 	}
 }
 
-// Build describes a single build
-type mock struct {
-	t string
-}
+type mock struct{}
 
-func (m mock) ID() string                   { return "" }
-func (m mock) ExecutorType() string         { return m.t }
-func (m mock) ProjectID() string            { return "" }
-func (m mock) Completed() bool              { return false }
-func (m mock) Stages() []build.Stage        { return nil }
-func (m mock) Created() int64               { return 0 }
-func (m mock) Script() string               { return "" }
-func (m mock) AddStage(s build.Stage) error { return nil }
-func (m mock) Output([]byte) error          { return nil }
-func (m mock) Stdout() []byte               { return nil }
+func (m mock) Script() string { return "" }
+func (m mock) ID() string     { return "" }

@@ -102,11 +102,11 @@ func New(project Buildable) (Build, error) {
 	if project.Script() != "" {
 		e = "fork"
 	}
-	return NewWithExecutor(project, e)
+	return NewWithExecutorType(project, e)
 }
 
-// NewWithExecutor creates a new build with a custom executor
-func NewWithExecutor(project Buildable, e string) (Build, error) {
+// NewWithExecutorType creates a new build with a custom executor
+func NewWithExecutorType(project Buildable, e string) (Build, error) {
 	id := uuid.NewV4().String()
 	created := time.Now().UnixNano()
 	b := defaultBuild{

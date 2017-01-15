@@ -43,10 +43,5 @@ type mock struct {
 	script string
 }
 
-func (m *mock) Script() string {
-	return m.script
-}
-
-func (m *mock) ID() string {
-	return m.id
-}
+func (m *mock) Script() string { return m.script }
+func (m *mock) ID() string     { return m.id }
