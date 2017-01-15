@@ -8,7 +8,8 @@ projects = [
   "testdata/success.hcl",
   "testdata/failure.hcl",
   "testdata/delay100s.hcl",
-  "testdata/stages.hcl"
+  "testdata/stages.hcl",
+  "testdata/output.hcl"
 ]
 
 # State store configuration

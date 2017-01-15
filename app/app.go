@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"time"
@@ -88,26 +89,47 @@ func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 	if err != nil {
 		return nil, err
 	}
-	go (func() {
-		exitStatus := <-ch
-		log.Printf("Exit %d\n", exitStatus)
-		if !b.Completed() {
-			t := build.SUCCESS
-			if exitStatus != 0 {
-				t = build.FAILURE
-			}
-			lastStage := build.Stage{
-				Type:      t,
-				Name:      "end-of-script",
-				Timestamp: time.Now().Unix(),
-			}
-			err := b.AddStage(lastStage)
-			if err != nil {
-				log.Printf("Could not add final stage.%v\n", err)
-			}
-		}
-	})()
+	go a.pipeOutput(b, e.Stdout())
+	go a.monitorExit(b, ch)
 	return b, nil
+}
+
+func (a defaultApp) pipeOutput(b build.Build, stdout io.Reader) {
+	buf := make([]byte, 1024)
+	for {
+		n, err := stdout.Read(buf)
+		if n != 0 {
+			log.Printf("Got %v", string(buf[:n]))
+		}
+		if err == nil {
+			continue
+		}
+		if err != io.EOF {
+			log.Printf("Error reading stdout: %v\n", err)
+		}
+		break
+
+	}
+}
+
+func (a defaultApp) monitorExit(b build.Build, ch <-chan int) {
+	exitStatus := <-ch
+	log.Printf("Exit %d\n", exitStatus)
+	if !b.Completed() {
+		t := build.SUCCESS
+		if exitStatus != 0 {
+			t = build.FAILURE
+		}
+		lastStage := build.Stage{
+			Type:      t,
+			Name:      "end-of-script",
+			Timestamp: time.Now().Unix(),
+		}
+		err := b.AddStage(lastStage)
+		if err != nil {
+			log.Printf("Could not add final stage.%v\n", err)
+		}
+	}
 }
 
 //AddStage adds a build stage
