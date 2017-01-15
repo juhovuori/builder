@@ -12,4 +12,4 @@ projects = [
   "testdata/output.hcl"
 ]
 
-store = "memory"
+store = "sqlite"

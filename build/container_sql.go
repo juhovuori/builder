@@ -2,7 +2,6 @@ package build
 
 import (
 	"database/sql"
-	"errors"
 	"log"
 	"os"
 
@@ -17,25 +16,30 @@ const filename = "/tmp/builder.db"
 
 func (c *sqlContainer) Init(purge bool) error {
 	var err error
-	os.Remove(filename)
+	if purge {
+		os.Remove(filename)
+	}
 
 	c.db, err = sql.Open("sqlite3", filename)
 	if err != nil {
 		return err
 	}
 	sqlStmt := `
-	create table builds (
+	create table if not exists builds (
 		id text not null primary key,
 		projectid text not null,
 		script text not null,
-		executortype text not null,
-		output text not null);
-	create table stages (
+		executortype text not null);
+	create table if not exists stages (
 		id integer not null primary key autoincrement,
 		build integer not null,
 		type text not null,
 		timestamp int64 not null,
 		name text not null,
+		data text);
+	create table if not exists output (
+		id integer not null primary key autoincrement,
+		build text not null,
 		data text);
 	`
 	_, err = c.db.Exec(sqlStmt)
@@ -74,12 +78,12 @@ func (c *sqlContainer) Builds() []string {
 
 func (c *sqlContainer) Build(ID string) (Build, error) {
 	build := defaultBuild{BID: ID}
-	stmt, err := c.db.Prepare("select projectid, script, executortype, output from builds where id = ?")
+	stmt, err := c.db.Prepare("select projectid, script, executortype from builds where id = ?")
 	if err != nil {
 		return nil, err
 	}
 	defer stmt.Close()
-	err = stmt.QueryRow(ID).Scan(&build.BProjectID, &build.BScript, &build.BExecutorType, &build.Boutput)
+	err = stmt.QueryRow(ID).Scan(&build.BProjectID, &build.BScript, &build.BExecutorType)
 	if err == sql.ErrNoRows {
 		return nil, ErrNotFound
 	} else if err != nil {
@@ -101,10 +105,28 @@ func (c *sqlContainer) Build(ID string) (Build, error) {
 		if err != nil {
 			return nil, err
 		}
-		err := build.AddStage(stage)
+		err = build.AddStage(stage)
 		if err != nil {
 			return nil, err
 		}
+	}
+
+	stmt, err = c.db.Prepare("select data from output where build = ? order by id")
+	if err != nil {
+		return nil, err
+	}
+	rows, err = stmt.Query(ID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		data := []byte{}
+		err = rows.Scan(&data)
+		if err != nil {
+			return nil, err
+		}
+		build.Boutput = append(build.Boutput, data...)
 	}
 
 	return &build, nil
@@ -115,21 +137,15 @@ func (c *sqlContainer) New(b Buildable) (Build, error) {
 	if err != nil {
 		return nil, err
 	}
-	tx, err := c.db.Begin()
-	if err != nil {
-		return nil, err
-	}
-	stmt, err := tx.Prepare("insert into builds(id, projectid, script, executortype, output) values(?, ?, ?, ?, ?)")
+	stmt, err := c.db.Prepare("insert into builds(id, projectid, script, executortype) values(?, ?, ?, ?)")
 	if err != nil {
 		return nil, err
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(build.ID(), build.ProjectID(), build.Script(), build.ExecutorType(), "")
+	_, err = stmt.Exec(build.ID(), build.ProjectID(), build.Script(), build.ExecutorType())
 	if err != nil {
 		return nil, err
 	}
-	tx.Commit()
-
 	return build, nil
 }
 
@@ -171,5 +187,14 @@ func (c *sqlContainer) AddStage(buildID string, stage Stage) error {
 }
 
 func (c *sqlContainer) Output(buildID string, output []byte) error {
-	return errors.New("moe")
+	stmt, err := c.db.Prepare("insert into output(build, data) values(?, ?)")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(buildID, output)
+	if err != nil {
+		return err
+	}
+	return nil
 }

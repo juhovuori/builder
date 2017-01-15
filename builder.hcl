@@ -9,4 +9,4 @@ projects = [
   "https://raw.githubusercontent.com/juhovuori/builder/master/project.hcl"
 ]
 
-store = "memory"
+store = "sqlite"

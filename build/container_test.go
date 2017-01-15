@@ -69,5 +69,20 @@ func TestContainer(t *testing.T) {
 				t.Errorf("%d, %d: Expected %d stages, got %d\n", i, j, j, len(newB.Stages()))
 			}
 		}
+		err = container.Output(newB.ID(), []byte("foo"))
+		if err != nil {
+			t.Errorf("%d: Unexpected error %v\n", i, err)
+		}
+		err = container.Output(newB.ID(), []byte("bar"))
+		if err != nil {
+			t.Errorf("%d: Unexpected error %v\n", i, err)
+		}
+		newB, err = container.Build(newB.ID())
+		if err != nil {
+			t.Errorf("%d: Unexpected error %v\n", i, err)
+		}
+		if string(newB.Stdout()) != "foobar" {
+			t.Errorf("%d: Invalid output %s, expected foobar\n", i, string(newB.Stdout()))
+		}
 	}
 }
