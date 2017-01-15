@@ -1,6 +1,7 @@
 package exec
 
 import (
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -19,11 +20,10 @@ type forkExecutor struct {
 	ScriptURL string
 	Args      []string
 	Env       []string
+	stdout    io.Reader
 }
 
 const scriptfilename = "script"
-const stdoutfilename = "stdout"
-const stderrfilename = "stderr"
 
 func (f *forkExecutor) Run() (<-chan int, error) {
 	var err error
@@ -44,6 +44,10 @@ func (f *forkExecutor) Cleanup() error {
 	return os.RemoveAll(f.Dir)
 }
 
+func (f *forkExecutor) Stdout() io.Reader {
+	return f.stdout
+}
+
 func (f *forkExecutor) createDir() error {
 	return os.Mkdir(f.Dir, 0755)
 }
@@ -61,19 +65,15 @@ func (f *forkExecutor) copyScript() error {
 func (f *forkExecutor) run(ch chan<- int) error {
 	var err error
 	filename := path.Join(f.Dir, scriptfilename)
-	stdout := path.Join(f.Dir, stdoutfilename)
-	stderr := path.Join(f.Dir, stderrfilename)
 	cmd := exec.Command(filename, f.Args...)
 	cmd.Dir = f.Dir
 	cmd.Stdin = nil
 	cmd.Env = append(os.Environ(), f.Env...)
-
-	if cmd.Stdout, err = os.Create(stdout); err != nil {
+	f.stdout, err = cmd.StdoutPipe()
+	if err != nil {
 		return err
 	}
-	if cmd.Stderr, err = os.Create(stderr); err != nil {
-		return err
-	}
+	cmd.Stderr = cmd.Stdout
 	if err := cmd.Start(); err != nil {
 		return err
 	}

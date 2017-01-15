@@ -1,10 +1,15 @@
 package exec
 
-import "github.com/juhovuori/builder/build"
+import (
+	"io"
+
+	"github.com/juhovuori/builder/build"
+)
 
 // Executor is a object that is capable of executing a build
 type Executor interface {
 	Run() (<-chan int, error)
+	Stdout() io.Reader
 	Cleanup() error
 }
 
