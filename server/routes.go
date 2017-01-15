@@ -53,8 +53,8 @@ func (s *echoServer) hGetStdout(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	stdout := b.Stdout()
-	return c.Blob(http.StatusOK, "application/octet-stream", stdout)
+	stdout := string(b.Stdout())
+	return c.String(http.StatusOK, stdout)
 }
 
 func (s *echoServer) hAddStage(c echo.Context) error {
