@@ -60,8 +60,8 @@ func TestNewFromStringAndAccessors(t *testing.T) {
 	if p.URL() != "" {
 		t.Errorf("Got URL %s, expected %s\n", p.URL(), "")
 	}
-	if p.ID() != "d41d8cd98f00b204e9800998ecf8427e" {
-		t.Errorf("Got ID %s, expected %s\n", p.ID(), "")
+	if p.ID() != "b18cfe21-db37-5154-951b-4359cbefd080" {
+		t.Errorf("Got ID %s, expected %s\n", p.ID(), "b18cfe21-db37-5154-951b-4359cbefd080")
 	}
 	if p.Name() != "name" {
 		t.Errorf("Got Name %s, expected %s\n", p.Name(), "")

@@ -1,11 +1,9 @@
 package project
 
 import (
-	"crypto/md5"
-	"fmt"
-
 	"github.com/hashicorp/hcl"
 	"github.com/juhovuori/builder/fetcher"
+	uuid "github.com/satori/go.uuid"
 )
 
 // Project represents a single managed project
@@ -31,7 +29,7 @@ type Attributes interface {
 // defaultProject is the main implementation of Project
 type defaultProject struct {
 	Purl         string `json:"url"`
-	Pmd5         string `json:"id"`
+	Pid          string `json:"id"`
 	Perr         error  `json:"error"`
 	Pname        string `json:"name" hcl:"name"`
 	Pdescription string `json:"description" hcl:"description"`
@@ -43,7 +41,7 @@ func (p *defaultProject) URL() string {
 }
 
 func (p *defaultProject) ID() string {
-	return p.Pmd5
+	return p.Pid
 }
 
 func (p *defaultProject) Err() error {
@@ -69,12 +67,12 @@ func fetchConfig(filename string) (string, error) {
 
 func newProject(config string, URL string, err error) (*defaultProject, error) {
 	var p defaultProject
+	err2 := hcl.Decode(&p, config)
 	if err == nil {
-		err = hcl.Decode(&p, config)
+		err = err2
 	}
-	MD5 := md5.Sum([]byte(URL))
 	p.Purl = URL
-	p.Pmd5 = fmt.Sprintf("%x", MD5)
+	p.Pid = uuid.NewV5(namespace, URL).String()
 	p.Perr = err
 	return &p, err
 }
@@ -89,3 +87,6 @@ func NewProject(URL string) (Project, error) {
 func New(config string) (Project, error) {
 	return newProject(config, "", nil)
 }
+
+// namespace is a global namespace for project ID generation.
+var namespace, _ = uuid.FromString("a7cf1c8b-7b5e-4216-85d3-877e16845ebb")
