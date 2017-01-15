@@ -35,9 +35,6 @@ func TestBuild(t *testing.T) {
 		if b.Completed() != false {
 			t.Errorf("Wrong Completed %v\n", b.Completed())
 		}
-		if b.Error() != nil {
-			t.Errorf("Wrong Error %v\n", b.Error())
-		}
 	}
 }
 

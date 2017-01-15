@@ -18,7 +18,7 @@ type Build interface {
 	ProjectID() string
 	Script() string
 	Completed() bool
-	Error() error
+	Stages() []Stage
 	AddStage(stage Stage) error
 	Output([]byte) error
 	Stdout() []byte
@@ -58,8 +58,8 @@ func (b *defaultBuild) Completed() bool {
 	return lastStage.Type == SUCCESS || lastStage.Type == FAILURE
 }
 
-func (b *defaultBuild) Error() error {
-	return b.BErr
+func (b *defaultBuild) Stages() []Stage {
+	return b.Bstages
 }
 
 func (b *defaultBuild) AddStage(stage Stage) error {

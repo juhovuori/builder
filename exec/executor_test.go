@@ -42,7 +42,7 @@ func (m mock) ID() string                   { return "" }
 func (m mock) ExecutorType() string         { return m.t }
 func (m mock) ProjectID() string            { return "" }
 func (m mock) Completed() bool              { return false }
-func (m mock) Error() error                 { return nil }
+func (m mock) Stages() []build.Stage        { return nil }
 func (m mock) Script() string               { return "" }
 func (m mock) AddStage(s build.Stage) error { return nil }
 func (m mock) Output([]byte) error          { return nil }
