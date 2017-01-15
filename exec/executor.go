@@ -18,7 +18,7 @@ func NewWithEnvironment(b build.Build, env []string) (Executor, error) {
 	switch b.ExecutorType() {
 	case "fork":
 		e := forkExecutor{
-			Dir:       tmpFilename(),
+			Dir:       tmpFilenameByID(b.ID()),
 			ScriptURL: b.Script(),
 			Args:      []string{},
 			Env:       env,

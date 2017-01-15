@@ -78,7 +78,6 @@ func (f *forkExecutor) run(ch chan<- int) error {
 		return err
 	}
 	go f.monitor(ch, cmd)
-	log.Printf("Executor %+v\n", f)
 	return nil
 }
 
