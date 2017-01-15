@@ -90,7 +90,7 @@ func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 		return nil, err
 	}
 	go a.pipeOutput(b.ID(), e.Stdout())
-	go a.monitorExit(b, ch)
+	go a.monitorExit(b.ID(), ch)
 	return b, nil
 }
 
@@ -112,10 +112,10 @@ func (a defaultApp) pipeOutput(buildID string, stdout io.Reader) {
 	}
 }
 
-func (a defaultApp) monitorExit(b build.Build, ch <-chan int) {
+func (a defaultApp) monitorExit(buildID string, ch <-chan int) {
 	exitStatus := <-ch
 	log.Printf("Exit %d\n", exitStatus)
-	if !b.Completed() {
+	if b, _ := a.builds.Build(buildID); !b.Completed() {
 		t := build.SUCCESS
 		if exitStatus != 0 {
 			t = build.FAILURE
@@ -125,7 +125,7 @@ func (a defaultApp) monitorExit(b build.Build, ch <-chan int) {
 			Name:      "end-of-script",
 			Timestamp: time.Now().Unix(),
 		}
-		err := b.AddStage(lastStage)
+		err := a.builds.AddStage(buildID, lastStage)
 		if err != nil {
 			log.Printf("Could not add final stage.%v\n", err)
 		}
