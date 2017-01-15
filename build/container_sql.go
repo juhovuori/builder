@@ -80,7 +80,9 @@ func (c *sqlContainer) Build(ID string) (Build, error) {
 	}
 	defer stmt.Close()
 	err = stmt.QueryRow(ID).Scan(&build.BProjectID, &build.BScript, &build.BExecutorType, &build.Boutput)
-	if err != nil {
+	if err == sql.ErrNoRows {
+		return nil, ErrNotFound
+	} else if err != nil {
 		return nil, err
 	}
 
@@ -139,23 +141,23 @@ func (c *sqlContainer) AddStage(buildID string, stage Stage) error {
 		return err
 	}
 
-	// TODO: get last
-	stmt, err := tx.Prepare("select type, timestamp, name, data from stages where build = ? order by timestamp desc limit 1")
+	stmt, err := tx.Prepare("select type, timestamp, name, data from stages where build = ? order by id desc limit 1")
 	if err != nil {
 		return err
 	}
-	err = stmt.QueryRow(buildID).Scan(&buf.Type, &buf.Timestamp, &buf.Name, &buf.Data)
+	t := ""
+	err = stmt.QueryRow(buildID).Scan(&t, &buf.Timestamp, &buf.Name, &buf.Data)
+	buf.Type = StageType(t)
 	if err == sql.ErrNoRows {
 		previous = nil
 	} else if err != nil {
 		return err
 	}
-
 	err = stage.ValidateWithPredecessor(previous)
 	if err != nil {
 		return err
 	}
-	stmt, err = tx.Prepare("insert into stages(build, type, timestamp, name, data) values(?, ?, ?, ?, ?)")
+	stmt, err = tx.Prepare("insert into stages (build, type, timestamp, name, data) values (?, ?, ?, ?, ?)")
 	if err != nil {
 		return err
 	}

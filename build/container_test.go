@@ -46,25 +46,28 @@ func TestContainer(t *testing.T) {
 			t.Errorf("%d: Expected 1 build, got %d builds\n", i, len(bs))
 		}
 
-		retrievedB, err := container.Build(newB.ID())
-		if err != nil {
-			t.Errorf("%d: Unexpected error %v\n", i, err)
+		stages := []Stage{
+			Stage{},
+			Stage{Type: CREATED},
+			Stage{Type: STARTED},
+			Stage{Type: PROGRESS},
+			Stage{Type: PROGRESS},
+			Stage{Type: SUCCESS},
 		}
-
-		if len(retrievedB.Stages()) != 0 {
-			t.Errorf("%d: Expected 0 stages, got %d\n", i, len(retrievedB.Stages()))
-		}
-		err = container.AddStage(retrievedB.ID(), Stage{Type: CREATED})
-		if err != nil {
-			t.Errorf("%d: Unexpected error %v\n", i, err)
-		}
-		retrievedB, err = container.Build(newB.ID())
-		if err != nil {
-			t.Errorf("%d: Unexpected error %v\n", i, err)
-		}
-
-		if len(retrievedB.Stages()) != 1 {
-			t.Errorf("%d: Expected 1 stages, got %d\n", i, len(retrievedB.Stages()))
+		for j, s := range stages {
+			if j != 0 {
+				err = container.AddStage(newB.ID(), s)
+				if err != nil {
+					t.Errorf("%d, %d: Unexpected error %v\n", i, j, err)
+				}
+			}
+			newB, err = container.Build(newB.ID())
+			if err != nil {
+				t.Errorf("%d, %d: Unexpected error %v\n", i, j, err)
+			}
+			if len(newB.Stages()) != j {
+				t.Errorf("%d, %d: Expected %d stages, got %d\n", i, j, j, len(newB.Stages()))
+			}
 		}
 	}
 }
