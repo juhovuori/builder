@@ -55,7 +55,7 @@ func (c *sqlContainer) Init(purge bool) error {
 func (c *sqlContainer) Builds() []string {
 	builds := []string{}
 
-	rows, err := c.db.Query("select id from builds")
+	rows, err := c.db.Query("select id from builds order by id desc")
 	if err != nil {
 		log.Println(err)
 		return nil
