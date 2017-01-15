@@ -20,6 +20,8 @@ type Build interface {
 	Completed() bool
 	Error() error
 	AddStage(stage Stage) error
+	Output([]byte) error
+	Stdout() []byte
 }
 
 type defaultBuild struct {
@@ -29,6 +31,7 @@ type defaultBuild struct {
 	BExecutorType string  `json:"executor-type"`
 	BErr          error   `json:"error"`
 	Bstages       []Stage `json:"stages"`
+	Boutput       []byte
 }
 
 func (b *defaultBuild) ID() string {
@@ -70,6 +73,15 @@ func (b *defaultBuild) AddStage(stage Stage) error {
 	}
 	b.Bstages = append(b.Bstages, stage)
 	return nil
+}
+
+func (b *defaultBuild) Output(output []byte) error {
+	b.Boutput = append(b.Boutput, output...)
+	return nil
+}
+
+func (b *defaultBuild) Stdout() []byte {
+	return b.Boutput
 }
 
 // New creates a new build

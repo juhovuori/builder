@@ -47,6 +47,16 @@ func (s *echoServer) hGetBuild(c echo.Context) error {
 	return c.JSON(http.StatusOK, b)
 }
 
+func (s *echoServer) hGetStdout(c echo.Context) error {
+	buildID := c.Param("id")
+	b, err := s.app.Build(buildID)
+	if err != nil {
+		return err
+	}
+	stdout := b.Stdout()
+	return c.Blob(http.StatusOK, "application/octet-stream", stdout)
+}
+
 func (s *echoServer) hAddStage(c echo.Context) error {
 	buildID := c.Param("id")
 	stage := build.Stage{

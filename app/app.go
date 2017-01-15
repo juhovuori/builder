@@ -89,17 +89,17 @@ func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 	if err != nil {
 		return nil, err
 	}
-	go a.pipeOutput(b, e.Stdout())
+	go a.pipeOutput(b.ID(), e.Stdout())
 	go a.monitorExit(b, ch)
 	return b, nil
 }
 
-func (a defaultApp) pipeOutput(b build.Build, stdout io.Reader) {
+func (a defaultApp) pipeOutput(buildID string, stdout io.Reader) {
 	buf := make([]byte, 1024)
 	for {
 		n, err := stdout.Read(buf)
 		if n != 0 {
-			log.Printf("Got %v", string(buf[:n]))
+			a.builds.Output(buildID, buf[:n])
 		}
 		if err == nil {
 			continue
