@@ -12,8 +12,4 @@ projects = [
   "testdata/output.hcl"
 ]
 
-# State store configuration
-state_store {
-  type = "file"
-  directory = "/tmp/builder"
-}
+store = "memory"

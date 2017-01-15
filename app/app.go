@@ -144,7 +144,8 @@ func New(cfg Config) (App, error) {
 	if err != nil {
 		return nil, err
 	}
-	builds, err := build.NewContainer("memory")
+
+	builds, err := build.NewContainer(cfg.Store())
 	if err != nil {
 		return nil, err
 	}

@@ -9,8 +9,4 @@ projects = [
   "https://raw.githubusercontent.com/juhovuori/builder/master/project.hcl"
 ]
 
-# State store configuration
-state_store {
-  type = "file"
-  directory = "/tmp/builder"
-}
+store = "memory"

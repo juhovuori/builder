@@ -13,19 +13,14 @@ type Config interface {
 	ServerAddress() string
 	URL() string
 	project.Config
-	Store() storeCfg
-}
-
-type storeCfg struct {
-	Type      string `hcl:"type"`
-	Directory string `hcl:"directory"`
+	Store() string
 }
 
 type builderCfg struct {
 	ServerAddress string   `hcl:"bind_addr"`
 	URL           string   `hcl:"url"`
 	Projects      []string `hcl:"projects"`
-	Store         storeCfg `hcl:"state_store"`
+	Store         string   `hcl:"store"`
 }
 
 type cfgManager struct {
@@ -44,7 +39,7 @@ func (cm cfgManager) Projects() []string {
 	return cm.cfg.Projects
 }
 
-func (cm cfgManager) Store() storeCfg {
+func (cm cfgManager) Store() string {
 	return cm.cfg.Store
 }
 
