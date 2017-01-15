@@ -12,4 +12,4 @@ projects = [
   "testdata/output.hcl"
 ]
 
-store = "sqlite"
+store = "sqlite:/tmp/builder-prod.db"

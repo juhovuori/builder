@@ -9,4 +9,4 @@ projects = [
   "https://raw.githubusercontent.com/juhovuori/builder/master/project.hcl"
 ]
 
-store = "sqlite"
+store = "sqlite:/tmp/builder-prod.db"

@@ -9,18 +9,20 @@ import (
 )
 
 type sqlContainer struct {
-	db *sql.DB // TODO: when to db.Close
+	db       *sql.DB // TODO: when to db.Close
+	filename string
 }
-
-const filename = "/tmp/builder.db"
 
 func (c *sqlContainer) Init(purge bool) error {
 	var err error
+	if c.filename == "" {
+		c.filename = "/tmp/builder.db"
+	}
 	if purge {
-		os.Remove(filename)
+		os.Remove(c.filename)
 	}
 
-	c.db, err = sql.Open("sqlite3", filename)
+	c.db, err = sql.Open("sqlite3", c.filename)
 	if err != nil {
 		return err
 	}
