@@ -149,9 +149,6 @@ func (c *sqlContainer) New(b Buildable) (Build, error) {
 	if err != nil {
 		return nil, err
 	}
-	log.Println("insert into builds(id, projectid, created, script, executortype) values(?, ?, ?, ?, ?)")
-	log.Println(build.ID(), build.ProjectID(), build.Created(), build.Script(), build.ExecutorType())
-
 	return build, nil
 }
 
