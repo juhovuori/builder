@@ -2,6 +2,7 @@ package exec
 
 import (
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -14,11 +15,12 @@ func TestForkExecutor(t *testing.T) {
 		{"testdata/success.sh", 0, ""},
 		{"testdata/output.sh", 0, "something\n"},
 		{"testdata/stderr.sh", 0, "some error\n"},
+		{"testdata/pwd.sh", 0, "<dir>\n"},
 		{"testdata/fail.sh", 1, ""},
-		//TODO: pwd test
 	}
 	for i, c := range cases {
 		dir := tmpFilename()
+		c.output = strings.Replace(c.output, "<dir>", dir, 1)
 		e := forkExecutor{dir, c.script, []string{}, []string{}, nil}
 		ch, err := e.Run()
 		if err != nil {
@@ -31,7 +33,7 @@ func TestForkExecutor(t *testing.T) {
 		if !info.IsDir() {
 			t.Errorf("%d: %s is not a directory.\n", i, dir)
 		}
-		buf := make([]byte, 20)
+		buf := make([]byte, 100)
 		n, err := e.stdout.Read(buf)
 		if err != nil {
 			t.Logf("%d: Error reading output %v\n", i, err)
