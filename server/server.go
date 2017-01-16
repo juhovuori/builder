@@ -64,6 +64,7 @@ func New(app app.App) (Server, error) {
 		app:  app,
 	}
 	server.echo.HTTPErrorHandler = server.errorHandler
+	server.echo.Pre(middleware.RemoveTrailingSlash())
 	server.echo.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "method=${method}, uri=${uri}, status=${status}\n",
 	}))
