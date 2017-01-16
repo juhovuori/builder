@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FILES="builder builder.hcl project.hcl version.json"
+FILES="builder"
 
 
 mkdir -p deploy

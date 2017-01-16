@@ -2,7 +2,7 @@
 
 VERSION="$(git rev-parse HEAD)"
 OPTS="--region=eu-central-1 --storage-class=STANDARD_IA --acl=public-read"
-FILES="builder builder.hcl project.hcl version.json"
+FILES="builder"
 
 for FILE in $FILES
 do

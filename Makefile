@@ -7,7 +7,7 @@ test-v:
 	go test -v ./...
 
 version:
-	./scripts/version.sh >version.json
+	go generate ./version
 
 build: version
 	go build

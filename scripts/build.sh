@@ -6,7 +6,4 @@ cd src/github.com/juhovuori/builder
 make build
 make test-v
 mv builder ~
-cp builder.hcl ~
-cp project.hcl ~
-cp version.json ~
 killall builder # systemd should restart
