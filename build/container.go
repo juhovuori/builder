@@ -5,6 +5,7 @@ import "strings"
 // Container is the container for builds
 type Container interface {
 	Init(purge bool) error
+	Close() error
 	Builds() []string
 	Build(ID string) (Build, error)
 	New(b Buildable) (Build, error)

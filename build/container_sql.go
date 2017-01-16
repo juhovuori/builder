@@ -9,7 +9,7 @@ import (
 )
 
 type sqlContainer struct {
-	db       *sql.DB // TODO: when to db.Close
+	db       *sql.DB
 	filename string
 }
 
@@ -51,6 +51,10 @@ func (c *sqlContainer) Init(purge bool) error {
 		return err
 	}
 	return nil
+}
+
+func (c sqlContainer) Close() error {
+	return c.db.Close()
 }
 
 func (c *sqlContainer) Builds() []string {

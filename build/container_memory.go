@@ -8,6 +8,10 @@ func (c memoryContainer) Init(purge bool) error {
 	return nil
 }
 
+func (c memoryContainer) Close() error {
+	return nil
+}
+
 func (c memoryContainer) Builds() []string {
 	builds := []string{}
 	for ID := range c.builds {

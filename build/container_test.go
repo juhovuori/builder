@@ -98,5 +98,9 @@ func TestContainer(t *testing.T) {
 		if string(newB.Stdout()) != "foobar" {
 			t.Errorf("%d: Invalid output %s, expected foobar\n", i, string(newB.Stdout()))
 		}
+		err = container.Close()
+		if err != nil {
+			t.Errorf("%d: Unexpected error %v\n", i, err)
+		}
 	}
 }
