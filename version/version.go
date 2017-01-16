@@ -1,4 +1,4 @@
-package server
+package version
 
 import (
 	"encoding/json"
@@ -17,7 +17,13 @@ type versionInfo struct {
 	Uptime      int64  `json:"uptime"`
 }
 
-func version() versionInfo {
+func init() {
+	startup = time.Now()
+	setupGeneratedVersion()
+	globalVersionInfo.StartupTime = startup.Format(time.RFC3339)
+}
+
+func Version() versionInfo {
 	v := globalVersionInfo
 	now := time.Now()
 	v.Time = now.Format(time.RFC3339)
@@ -27,12 +33,6 @@ func version() versionInfo {
 
 var globalVersionInfo versionInfo
 var startup time.Time
-
-func setupVersion() {
-	startup = time.Now()
-	setupGeneratedVersion()
-	globalVersionInfo.StartupTime = startup.Format(time.RFC3339)
-}
 
 func setupGeneratedVersion() {
 	data, err := ioutil.ReadFile(fn)

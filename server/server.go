@@ -69,7 +69,6 @@ func New(app app.App) (Server, error) {
 		Format: "method=${method}, uri=${uri}, status=${status}\n",
 	}))
 	server.setupRouteHandlers()
-	setupVersion()
 	return server, nil
 }
 
