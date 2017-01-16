@@ -88,15 +88,16 @@ func (f *forkExecutor) monitor(ch chan<- int, cmd *exec.Cmd) {
 		var ok bool
 		if exitErr, ok = err.(*exec.ExitError); !ok {
 			log.Printf("Got unexpected error while waiting for child process %v\n", err)
-			// TODO: communicate unexpected failure
+			ch <- -1
 			return
 		}
 		if status, ok = exitErr.Sys().(syscall.WaitStatus); !ok {
 			log.Println("ExitError was not a WaitStatus. Is this Unix?")
-			// TODO: communicate unexpected failure. Might happen on non-unix
+			ch <- -2
 			return
 		}
 		ch <- status.ExitStatus()
+		return
 	}
 	ch <- 0
 }
