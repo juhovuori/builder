@@ -4,8 +4,8 @@ Builder is a continuous integration tool with following design goals
 - Text only configuration
 - API / CLI as primary user interfaces
 - Minimal functionality with maximal integrations to existing software
-- Seriously, executing a build should be nothing more than running a shell script
-  in a controlled environment.
+- Hackable, extensible web UI
+- Seriously, executing a build should be nothing more than running a shell script in a controlled environment.
 
 ## Getting started
 
