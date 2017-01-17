@@ -11,7 +11,7 @@ Builder is a continuous integration tool with following design goals
 
 1. Get builder. If you are on AMD64/Linux, you can just grab the latest binary:
 ```shell
-https://s3.eu-central-1.amazonaws.com/juhovuori/builder/builder
+curl -O https://s3.eu-central-1.amazonaws.com/juhovuori/builder/builder
 ```
 
     If not, you must build it yourself. The build process is a tiny bit
@@ -34,12 +34,12 @@ make build
 3. Trigger a build.
 Find out what is the id of your configured project (the id is computed from the URL of your project configuration file):
 ```shell
-curl localhost:8080/v1/projects
+curl http://localhost:8080/v1/projects
 ```
 
     And trigger a build
 ```shell
-curl -d '' localhost:8080/v1/projects/<projectid>/trigger
+curl -d '' http://localhost:8080/v1/projects/<projectid>/trigger
 ```
 
 ## Stale notes
