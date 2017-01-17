@@ -24,9 +24,9 @@ make build
 
     Currently, builder only supports Unix-like operating systems.
 
-2. Run builder
+2. Run builder server
 ```shell
-./builder -f https://raw.githubusercontent.com/juhovuori/builder/master/builder.hcl
+./builder server -f https://raw.githubusercontent.com/juhovuori/builder/master/builder.hcl
 ```
 
     The above command runs builder with configuration that is used to build builder itself. You must adjust the configuration to suit your project's needs.
