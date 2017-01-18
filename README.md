@@ -10,13 +10,13 @@ Builder is a continuous integration tool with following design goals
 ## Getting started
 
 1. Get builder. If you are on AMD64/Linux, you can just grab the latest binary:
-```shell
+ ```shell
 curl -O https://s3.eu-central-1.amazonaws.com/juhovuori/builder/builder
 ```
 
     If not, you must build it yourself. The build process is a tiny bit
     more complex than for a casual go project.
-```shell
+ ```shell
 go get -d github.com/juhovuori/builder
 cd $GOPATH/src/github.com/juhovuori/builder
 make build
@@ -25,20 +25,21 @@ make build
     Currently, builder only supports Unix-like operating systems.
 
 2. Run builder server
-```shell
+ ```shell
 ./builder server -f https://raw.githubusercontent.com/juhovuori/builder/master/builder.hcl
 ```
 
-    The above command runs builder with configuration that is used to build builder itself. You must adjust the configuration to suit your project's needs.
+    The above command runs builder with configuration that is used to build builder itself. 
+    You must adjust the configuration to suit your project's needs.
 
 3. Trigger a build.
 Find out what is the id of your configured project (the id is computed from the URL of your project configuration file):
-```shell
+ ```shell
 curl http://localhost:8080/v1/projects
 ```
 
     And trigger a build
-```shell
+ ```shell
 curl -d '' http://localhost:8080/v1/projects/<projectid>/trigger
 ```
 
