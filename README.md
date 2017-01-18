@@ -42,88 +42,48 @@ curl http://localhost:8080/v1/projects
 curl -d '' http://localhost:8080/v1/projects/<projectid>/trigger
 ```
 
-## Stale notes
-
 ## Configuration
-TODO
-- Modules
-    - File configuration
-    - Github configuration
-- General configuration
-- Projects configuration
 
+Getting there...
 
-## State storage
-- Modules
-    - File storage
-    - PostgreSQL storage
+### Builder configuration
+...
 
-
-## Operation
-- Watch projects based on project configuration
-- Web server to receive build stage commands
-    - Mutate:
-        - Create build
-        - Enter stage x
-        - Append to stage log x
-        - Store stage data x
-        - Finish stage
-        - Finish build
-    - Query:
-        - List projects
-        - List builds
-        - List build stages
-        - Show build log / data (streaming if possible)
-    - Authentication
-        - Github OAUTH2
-- CLI for build stage commands
-    - Everything that build stage server supports
-- Run a build:
-    - Takes in a project configuration and runs a build
-    - Generate build token and store build start.
-    - Acquire executor to run steps and pass token to that
-    - Run steps one by one and notify builder while going on
-- Web server that implements a UI
-    - Browse projects and start builds
-    - Dashboards with D3 or similar
-
-
-## General config
-
-
-## Notifications
-- Push notifications about build stage changes to other agents.
-- Modules:
-- HTTP notification
-
-
-## Execution manager
-- Maintains a pool of executors to run build stages
-
-
-## Organization manager
-- provides a web interface for creating organisations and running builder for each organisation
-
-
-## TODO
-- packer
-
+### Project configuration
+...
+## TODO ideas
 - websocket
 - CLI
-- Graceful shutdown
-- Use secret build token to modify build
-- Logging
+- Tokens
+    - system token
+        - Graceful shutdown
+    - build token
+- Better logging
 - Migrations
+- Notifications:
+    - push notifications about build stage changes to other agents
+    - http
+    - something else?
 - RESTify API. IDs => URLs, etc.
-- Store executors / executor pools / queues. Environment passing  also from these
+- Execution managers
+    - executor pools
+    - build queues.
+    - environment creation here instead of app
 - Query executors
 - Configuration refresh during trigger
 - ProjectID instead of string, etc.
 - Confirm thread safety -- an issue with pipeOutput
 
+- Organization manager
+    - provides a web interface for creating organisations and running builder for each org
+
+- API endpoint for stats
+    - configurable?
+
 - Basic web UI
 - Web UI plugins for displaying standard build stages such as go coverprofile
 
+- packer
 - => prometheus
 - => grafana
 - => docker
