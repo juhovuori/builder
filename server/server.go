@@ -15,8 +15,9 @@ type Server interface {
 }
 
 type echoServer struct {
-	echo *echo.Echo
-	app  app.App
+	echo  *echo.Echo
+	app   app.App
+	token *string
 }
 
 func (s echoServer) Run() error {
@@ -35,6 +36,7 @@ func (s echoServer) setupRouteHandlers() error {
 	s.echo.GET("/v1/projects/:id", s.hGetProject)
 	s.echo.POST("/v1/projects/:id/trigger", s.hTriggerBuild)
 	s.echo.GET("/v1/version", s.hVersion)
+	s.echo.POST("/v1/shutdown", s.hShutdown)
 	return nil
 }
 
@@ -59,9 +61,15 @@ func (s echoServer) errorHandler(err error, c echo.Context) {
 
 // New creates a new echo Server instance
 func New(app app.App) (Server, error) {
+	return NewWithSystemToken(app, nil)
+}
+
+// NewWithSystemToken creates a new echo Server instance
+func NewWithSystemToken(app app.App, token *string) (Server, error) {
 	server := echoServer{
-		echo: echo.New(),
-		app:  app,
+		echo:  echo.New(),
+		app:   app,
+		token: token,
 	}
 	server.echo.HTTPErrorHandler = server.errorHandler
 	server.echo.Pre(middleware.RemoveTrailingSlash())

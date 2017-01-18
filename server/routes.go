@@ -1,7 +1,9 @@
 package server
 
 import (
+	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/juhovuori/builder/build"
 	"github.com/juhovuori/builder/version"
@@ -83,4 +85,27 @@ func (s *echoServer) hGetProject(c echo.Context) error {
 		return err
 	}
 	return c.JSON(http.StatusOK, p)
+}
+
+func (s *echoServer) hShutdown(c echo.Context) error {
+	if s.token == nil {
+		return c.JSON(http.StatusForbidden, "Shutdown disabled")
+	}
+	token, err := ioutil.ReadAll(c.Request().Body)
+	if err != nil {
+		return err
+	}
+	if string(token) != *s.token {
+		return c.JSON(http.StatusForbidden, "Invalid token")
+	}
+	ch, err := s.app.Shutdown()
+	if err != nil {
+		return err
+	}
+	go func() {
+		<-ch
+		os.Exit(0)
+	}()
+
+	return c.JSON(http.StatusOK, "OK")
 }

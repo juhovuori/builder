@@ -22,6 +22,7 @@ type App interface {
 	Build(build string) (build.Build, error)
 	TriggerBuild(projectID string) (build.Build, error)
 	AddStage(buildID string, stage build.Stage) error
+	Shutdown() (<-chan bool, error)
 }
 
 type defaultApp struct {
@@ -127,6 +128,18 @@ func (a defaultApp) monitorExit(buildID string, ch <-chan int) {
 func (a defaultApp) AddStage(buildID string, stage build.Stage) error {
 	stage.Timestamp = time.Now().UnixNano()
 	return a.builds.AddStage(buildID, stage)
+}
+
+// Shutdown initiates a graceful shutdown
+func (a defaultApp) Shutdown() (<-chan bool, error) {
+	// TODO: stop creating builds
+	// TODO: wait for builds to finnish instead of sleep
+	ch := make(chan bool)
+	go func() {
+		<-time.After(time.Second * 2)
+		ch <- true
+	}()
+	return ch, nil
 }
 
 // New creates a new App from configuration

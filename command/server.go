@@ -25,6 +25,7 @@ func (cmd *Server) Help() string {
 // finished.
 func (cmd *Server) Run(args []string) int {
 	var configFile string
+	var systemToken *string
 	cmdFlags := flag.NewFlagSet("server", flag.ContinueOnError)
 	cmdFlags.Usage = func() { log.Println(cmd.Help()) }
 	cmdFlags.StringVar((&configFile), "f", "./builder.hcl", "HCL file to read config from")
@@ -45,12 +46,17 @@ func (cmd *Server) Run(args []string) int {
 		configFile = wd + "/builder.hcl"
 	}
 
+	rawSystemToken := os.Getenv("BUILDER_TOKEN")
+	if rawSystemToken != "" {
+		systemToken = &rawSystemToken
+	}
+
 	app, err := app.NewFromURL(configFile)
 	if err != nil {
 		log.Println("Unable to start application", err.Error())
 		return 1
 	}
-	s, err := server.New(app)
+	s, err := server.NewWithSystemToken(app, systemToken)
 	if err != nil {
 		log.Println("Unable to create server", err.Error())
 		return 1
