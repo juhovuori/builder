@@ -10,6 +10,7 @@ import (
 	"github.com/juhovuori/builder/build"
 	"github.com/juhovuori/builder/exec"
 	"github.com/juhovuori/builder/project"
+	"github.com/juhovuori/builder/version"
 )
 
 // App is the container for the whole builder application. This is used by
@@ -22,6 +23,7 @@ type App interface {
 	Build(build string) (build.Build, error)
 	TriggerBuild(projectID string) (build.Build, error)
 	AddStage(buildID string, stage build.Stage) error
+	Version() version.Info
 	Shutdown() (<-chan bool, error)
 }
 
@@ -140,6 +142,11 @@ func (a defaultApp) Shutdown() (<-chan bool, error) {
 		ch <- true
 	}()
 	return ch, nil
+}
+
+// Version returns app version information
+func (a defaultApp) Version() version.Info {
+	return version.Version()
 }
 
 // New creates a new App from configuration

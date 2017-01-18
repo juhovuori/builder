@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/juhovuori/builder/build"
-	"github.com/juhovuori/builder/version"
 	"github.com/labstack/echo"
 )
 
@@ -19,7 +18,7 @@ func (s *echoServer) hHealth(c echo.Context) error {
 }
 
 func (s *echoServer) hVersion(c echo.Context) error {
-	v := version.Version()
+	v := s.app.Version()
 	return c.JSON(http.StatusOK, v)
 }
 
