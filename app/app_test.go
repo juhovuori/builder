@@ -35,7 +35,8 @@ func TestTriggerBuild(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	projects := mockP{projectID}
+	p := project.NewStaticProject(projectID)
+	projects := project.NewStaticContainer(p)
 	cfg := builderCfg{Projects: []string{projectURL}}
 	config := cfgManager{&cfg}
 	app := defaultApp{
@@ -50,26 +51,4 @@ func TestTriggerBuild(t *testing.T) {
 	if b.ProjectID() != projectID {
 		t.Errorf("Wrong buildID %v\n", b.ProjectID())
 	}
-}
-
-type mockP struct {
-	id string
-}
-
-func (p mockP) Name() string        { return "" }
-func (p mockP) Description() string { return "" }
-func (p mockP) Script() string      { return "" }
-func (p mockP) URL() string         { return "" }
-func (p mockP) ID() string          { return p.id }
-func (p mockP) Err() error          { return nil }
-
-func (p mockP) Configure([]string) {}
-func (p mockP) Projects() []string {
-	return []string{p.id}
-}
-func (p mockP) Project(id string) (project.Project, error) {
-	if id == p.id {
-		return p, nil
-	}
-	return nil, project.ErrNotFound
 }

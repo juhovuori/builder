@@ -6,6 +6,14 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+// VCS defines a version control system type
+type VCS string
+
+const (
+	// GIT is a version control system type
+	GIT VCS = "git"
+)
+
 // Project represents a single managed project
 type Project interface {
 	Manager
@@ -15,6 +23,8 @@ type Project interface {
 // Manager represents the manager of a single project
 type Manager interface {
 	URL() string
+	VCS() VCS
+	Config() string
 	ID() string
 	Err() error
 }
@@ -38,6 +48,14 @@ type defaultProject struct {
 
 func (p *defaultProject) URL() string {
 	return p.Purl
+}
+
+func (p *defaultProject) Config() string {
+	return "project.hcl"
+}
+
+func (p *defaultProject) VCS() VCS {
+	return GIT
 }
 
 func (p *defaultProject) ID() string {
