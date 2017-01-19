@@ -29,7 +29,7 @@ make build
 ./builder server -f https://raw.githubusercontent.com/juhovuori/builder/master/builder.hcl
 ```
 
-    The above command runs builder with configuration that is used to build builder itself. 
+    The above command runs builder with configuration that is used to build builder itself.
     You must adjust the configuration to suit your project's needs.
 
 3. Trigger a build.
@@ -84,7 +84,6 @@ Getting there...
 - Basic web UI
 - Web UI plugins for displaying standard build stages such as go coverprofile
 
-- packer
 - => prometheus
 - => grafana
 - => docker
