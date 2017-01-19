@@ -12,6 +12,7 @@ func main() {
 	c := cli.NewCLI("builder", "0")
 	c.Args = os.Args[1:]
 	c.Commands = map[string]cli.CommandFactory{
+		"client":      command.ClientFactory,
 		"nop":         command.NopFactory,
 		"server":      command.ServerFactory,
 		"show-config": command.ShowConfigFactory,

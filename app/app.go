@@ -136,6 +136,7 @@ func (a defaultApp) AddStage(buildID string, stage build.Stage) error {
 func (a defaultApp) Shutdown() (<-chan bool, error) {
 	// TODO: stop creating builds
 	// TODO: wait for builds to finnish instead of sleep
+	log.Println("Initiating shutdown")
 	ch := make(chan bool)
 	go func() {
 		<-time.After(time.Second * 2)
