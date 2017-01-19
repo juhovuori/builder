@@ -5,14 +5,13 @@ import (
 
 	"github.com/hashicorp/hcl"
 	"github.com/juhovuori/builder/fetcher"
-	"github.com/juhovuori/builder/project"
 )
 
 // Config is the server configuration container
 type Config interface {
 	ServerAddress() string
 	URL() string
-	project.Config
+	Projects() []string
 	Store() string
 }
 

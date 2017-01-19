@@ -152,7 +152,7 @@ func (a defaultApp) Version() version.Info {
 
 // New creates a new App from configuration
 func New(cfg Config) (App, error) {
-	projects, err := project.NewContainer(cfg)
+	projects, err := project.NewContainer(cfg.Projects())
 	if err != nil {
 		return nil, err
 	}
