@@ -9,6 +9,7 @@ func TestNew(t *testing.T) {
 		err error
 	}{
 		{"git", "htttp://x", nil},
+		{"nop", "htttp://x", nil},
 		{"unknown", "htttp://y", ErrInvalidType},
 	}
 	for i, c := range cases {

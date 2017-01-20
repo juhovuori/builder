@@ -8,6 +8,7 @@ func TestValidate(t *testing.T) {
 		err error
 	}{
 		{"git", nil},
+		{"nop", nil},
 		{"unknown", ErrInvalidType},
 	}
 	for i, c := range cases {
