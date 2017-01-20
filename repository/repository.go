@@ -19,7 +19,8 @@ func New(t Type, URL string) (Repository, error) {
 
 	switch t {
 	case git:
-		return &gitRepository{ID, URL}, nil
+		dir := tmpFilenameByID(ID)
+		return &gitRepository{ID, URL, dir}, nil
 	case nop:
 		return &nopRepository{ID, URL}, nil
 	default:

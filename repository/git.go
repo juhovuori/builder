@@ -1,10 +1,14 @@
 package repository
 
-import "errors"
+import (
+	"os"
+	"os/exec"
+)
 
 type gitRepository struct {
 	id  string
 	url string
+	dir string
 }
 
 func (r *gitRepository) Type() Type {
@@ -20,13 +24,16 @@ func (r *gitRepository) ID() string {
 }
 
 func (r *gitRepository) Init() error {
-	return errors.New("not implemented")
+	cmd := exec.Command("git", "clone", r.url, r.dir)
+	return cmd.Run()
 }
 
 func (r *gitRepository) Cleanup() error {
-	return errors.New("not implemented")
+	return os.RemoveAll(r.dir)
 }
 
 func (r *gitRepository) Update() error {
-	return errors.New("not implemented")
+	cmd := exec.Command("git", "pull", "-f")
+	cmd.Dir = r.dir
+	return cmd.Run()
 }
