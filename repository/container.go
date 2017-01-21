@@ -6,7 +6,7 @@ import "github.com/labstack/gommon/log"
 type Container interface {
 	Repositories() []string
 	Repository(t Type, URL string) (Repository, error)
-	Add(t Type, URL string) error
+	Ensure(t Type, URL string) (Repository, error)
 	Remove(t Type, URL string) error
 }
 
@@ -31,17 +31,17 @@ func (c *defaultContainer) Repository(Type Type, URL string) (Repository, error)
 	return p, nil
 }
 
-func (c *defaultContainer) Add(t Type, URL string) error {
+func (c *defaultContainer) Ensure(t Type, URL string) (Repository, error) {
+	id := ID(t, URL)
+	if repository, ok := c.repositories[id]; ok {
+		return repository, nil
+	}
 	repository, err := New(t, URL)
 	if err != nil {
-		return err
-	}
-	id := repository.ID()
-	if _, ok := c.repositories[id]; ok {
-		return ErrDuplicate
+		return nil, err
 	}
 	c.repositories[id] = repository
-	return nil
+	return repository, nil
 }
 
 func (c *defaultContainer) Remove(t Type, URL string) error {

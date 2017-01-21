@@ -152,6 +152,30 @@ func (a defaultApp) Version() version.Info {
 	return version.Version()
 }
 
+func (a defaultApp) addProject(pc projectConfig) {
+	repository, err := a.repositories.Ensure(repository.Type(pc.Type), pc.Repository)
+	if err != nil {
+		log.Printf("Cannot add repository %v\n", err)
+	}
+	p, err := project.New(pc.Repository)
+	if err != nil {
+		log.Printf("Cannot create project: %v\n", err)
+		return
+	}
+	err = a.projects.Add(p)
+	if err != nil {
+		log.Printf("Cannot add project to container %v\n", err)
+	}
+	err = repository.Init()
+	if err != nil {
+		log.Printf("Cannot initialize repository %v\n", err)
+	}
+	err = repository.Update()
+	if err != nil {
+		log.Printf("Error updating repository %v\n", err)
+	}
+}
+
 // New creates a new App from configuration
 func New(cfg Config) (App, error) {
 	builds, err := build.NewContainer(cfg.Store)
@@ -162,13 +186,6 @@ func New(cfg Config) (App, error) {
 	repositories := repository.NewContainer()
 
 	projects := project.NewContainer()
-	for _, p := range cfg.Projects {
-		project, err := project.NewProject(p.Repository)
-		if err != nil {
-			log.Printf("Could not create project %s: %v\n", p.Repository, err)
-		}
-		projects.Add(project)
-	}
 
 	newApp := defaultApp{
 		projects,
@@ -176,6 +193,12 @@ func New(cfg Config) (App, error) {
 		builds,
 		cfg,
 	}
+
+	for _, p := range cfg.Projects {
+		// TODO: add concurrently
+		newApp.addProject(p)
+	}
+
 	return newApp, nil
 }
 

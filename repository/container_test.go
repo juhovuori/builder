@@ -5,19 +5,22 @@ import "testing"
 func TestContainer(t *testing.T) {
 
 	c := NewContainer()
-	err := c.Add("nop", "http://example.com")
+	_, err := c.Ensure("nop", "http://example.com")
 	if err != nil {
 		t.Error(err)
 	}
-	err = c.Add("nop", "http://example2.com")
+	r1, err := c.Ensure("nop", "http://example2.com")
 	if err != nil {
 		t.Error(err)
 	}
-	err = c.Add("nop", "http://example2.com")
-	if err != ErrDuplicate {
+	r2, err := c.Ensure("nop", "http://example2.com")
+	if err != nil {
 		t.Error(err)
 	}
-	err = c.Add("invalid", "http://example2.com")
+	if r1 != r2 {
+		t.Error("Expected to get the same repository")
+	}
+	_, err = c.Ensure("invalid", "http://example2.com")
 	if err != ErrInvalidType {
 		t.Error(err)
 	}

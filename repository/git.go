@@ -24,6 +24,10 @@ func (r *gitRepository) ID() string {
 }
 
 func (r *gitRepository) Init() error {
+	_, err := os.Stat(r.dir)
+	if err == nil {
+		return err
+	}
 	cmd := exec.Command("git", "clone", r.url, r.dir)
 	return cmd.Run()
 }
