@@ -7,6 +7,7 @@ import (
 	"github.com/juhovuori/builder/project"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 // Server is the HTTP server that implements Builder API
@@ -27,6 +28,7 @@ func (s echoServer) Run() error {
 func (s echoServer) setupRouteHandlers() error {
 	s.echo.GET("/", s.hRoot)
 	s.echo.GET("/health", s.hHealth)
+	s.echo.GET("/metrics", echo.WrapHandler(promhttp.Handler()))
 	s.echo.POST("/v1/builds", s.hCreateBuild)
 	s.echo.GET("/v1/builds", s.hListBuilds)
 	s.echo.GET("/v1/builds/:id", s.hGetBuild)
