@@ -83,7 +83,7 @@ func StartStage() Stage {
 // SuccessStage creates a build end stage
 func SuccessStage() Stage {
 	return Stage{
-		Type:      FAILURE,
+		Type:      SUCCESS,
 		Name:      "end-of-script",
 		Timestamp: time.Now().UnixNano(),
 	}
