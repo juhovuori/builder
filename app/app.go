@@ -152,8 +152,7 @@ func (a defaultApp) addProject(pc projectConfig) {
 		log.Printf("Cannot create project: %v\n", err)
 		return
 	}
-	err = a.projects.Add(p)
-	if err != nil {
+	if err = a.projects.Add(p); err != nil {
 		log.Printf("Cannot add project to container %v\n", err)
 	}
 	log.Printf("Added project: %s - %s - %s\n", pc.Type, pc.Repository, pc.Config)
