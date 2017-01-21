@@ -79,6 +79,9 @@ func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 	if err != nil {
 		return nil, err
 	}
+	if err = e.SaveFile("script", script); err != nil {
+		return nil, err
+	}
 	if err = a.builds.AddStage(b.ID(), build.StartStage()); err != nil {
 		return nil, err
 	}
@@ -90,7 +93,8 @@ func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 		}
 	}()
 	go func() {
-		err := e.Run(script, stdout)
+
+		err := e.Run("script", stdout)
 		exitStatus := exec.AsUnixStatusCode(err)
 		log.Printf("Exit %d\n", exitStatus)
 		if !b.Completed() {

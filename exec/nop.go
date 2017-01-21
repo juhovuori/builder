@@ -3,13 +3,17 @@ package exec
 // The nop executor does nothing.
 type nopExecutor struct{}
 
-func (f *nopExecutor) Run(script []byte, stdout chan<- []byte) error {
+func (n *nopExecutor) SaveFile(relative string, data []byte) error {
+	return nil
+}
+
+func (n *nopExecutor) Run(filename string, stdout chan<- []byte) error {
 	if stdout != nil {
 		close(stdout)
 	}
 	return nil
 }
 
-func (f *nopExecutor) Cleanup() error {
+func (n *nopExecutor) Cleanup() error {
 	return nil
 }

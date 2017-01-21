@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"syscall"
 )
 
@@ -20,25 +21,29 @@ type forkExecutor struct {
 	Env       []string
 }
 
-func (f *forkExecutor) Run(script []byte, stdout chan<- []byte) error {
+func (f *forkExecutor) SaveFile(relative string, data []byte) error {
+	// TODO: ensure no leaks with ..
+	filename := path.Join(f.Dir, relative)
+	dir, _ := filepath.Split(filename)
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		return err
+	}
+
+	return ioutil.WriteFile(filename, data, 0755)
+}
+
+func (f *forkExecutor) Run(filename string, stdout chan<- []byte) error {
 	var err error
 
-	filename := path.Join(f.Dir, "script")
-
-	if err = os.Mkdir(f.Dir, 0755); err != nil {
-		close(stdout)
-		return err
-	}
-
-	if err = ioutil.WriteFile(filename, script, 0755); err != nil {
-		close(stdout)
-		return err
-	}
 	if err = f.run(filename, stdout); err != nil {
 		close(stdout)
 		return err
 	}
 	return nil
+}
+
+func (f *forkExecutor) Directory() string {
+	return f.Dir
 }
 
 func (f *forkExecutor) Cleanup() error {

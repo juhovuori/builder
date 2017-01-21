@@ -37,7 +37,10 @@ func TestForkExecutor(t *testing.T) {
 		if err != nil {
 			t.Error(i, err)
 		}
-		err = e.Run(data, stdout)
+		if err = e.SaveFile(c.script, data); err != nil {
+			t.Error(err)
+		}
+		err = e.Run(c.script, stdout)
 		status := AsUnixStatusCode(err)
 		if status != c.status {
 			t.Errorf("%d: Got status: %v, expected %v\n", i, status, c.status)

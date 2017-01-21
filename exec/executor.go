@@ -4,7 +4,8 @@ import "github.com/juhovuori/builder/build"
 
 // Executor is a object that is capable of executing a build
 type Executor interface {
-	Run(script []byte, stdout chan<- []byte) error
+	SaveFile(relative string, data []byte) error
+	Run(filename string, stdout chan<- []byte) error
 	Cleanup() error
 }
 
