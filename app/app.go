@@ -71,15 +71,11 @@ func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 	if err != nil {
 		return nil, err
 	}
-	started := build.Stage{
-		Type:      build.STARTED,
-		Name:      "started",
-		Timestamp: time.Now().UnixNano(),
-	}
-	err = a.builds.AddStage(b.ID(), started)
+	err = a.builds.AddStage(b.ID(), build.StartStage())
 	if err != nil {
 		return nil, err
 	}
+
 	stdout := make(chan []byte)
 	go func() {
 		for data := range stdout {
@@ -92,16 +88,11 @@ func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 		exitStatus := exec.AsUnixStatusCode(err)
 		log.Printf("Exit %d\n", exitStatus)
 		if !b.Completed() {
-			t := build.SUCCESS
+			stage := build.SuccessStage()
 			if exitStatus != 0 {
-				t = build.FAILURE
+				stage = build.FailureStage()
 			}
-			lastStage := build.Stage{
-				Type:      t,
-				Name:      "end-of-script",
-				Timestamp: time.Now().UnixNano(),
-			}
-			err := a.builds.AddStage(b.ID(), lastStage)
+			err := a.builds.AddStage(b.ID(), stage)
 			if err != nil {
 				log.Printf("Could not add final stage.%v\n", err)
 			}

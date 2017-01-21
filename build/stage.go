@@ -1,5 +1,7 @@
 package build
 
+import "time"
+
 // StageType is a build stage type
 type StageType string
 
@@ -67,4 +69,31 @@ func (s Stage) ValidateWithPredecessor(predecessor *Stage) error {
 		}
 	}
 	return ErrStageOrder
+}
+
+// StartStage creates a build start stage
+func StartStage() Stage {
+	return Stage{
+		Type:      STARTED,
+		Name:      "started",
+		Timestamp: time.Now().UnixNano(),
+	}
+}
+
+// SuccessStage creates a build end stage
+func SuccessStage() Stage {
+	return Stage{
+		Type:      FAILURE,
+		Name:      "end-of-script",
+		Timestamp: time.Now().UnixNano(),
+	}
+}
+
+// FailureStage creates a build end stage
+func FailureStage() Stage {
+	return Stage{
+		Type:      FAILURE,
+		Name:      "end-of-script",
+		Timestamp: time.Now().UnixNano(),
+	}
 }
