@@ -3,15 +3,8 @@ package project
 import (
 	"github.com/hashicorp/hcl"
 	"github.com/juhovuori/builder/fetcher"
+	"github.com/juhovuori/builder/repository"
 	uuid "github.com/satori/go.uuid"
-)
-
-// VCS defines a version control system type
-type VCS string
-
-const (
-	// GIT is a version control system type
-	GIT VCS = "git"
 )
 
 // Project represents a single managed project
@@ -23,7 +16,7 @@ type Project interface {
 // Manager represents the manager of a single project
 type Manager interface {
 	URL() string
-	VCS() VCS
+	Repository() repository.Repository
 	Config() string
 	ID() string
 	Err() error
@@ -54,8 +47,8 @@ func (p *defaultProject) Config() string {
 	return "project.hcl"
 }
 
-func (p *defaultProject) VCS() VCS {
-	return GIT
+func (p *defaultProject) Repository() repository.Repository {
+	return nil
 }
 
 func (p *defaultProject) ID() string {
