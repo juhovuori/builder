@@ -137,6 +137,12 @@ func (a defaultApp) addProject(pc projectConfig) {
 	if err != nil {
 		log.Printf("Cannot add repository %v\n", err)
 	}
+	if err = repository.Init(); err != nil {
+		log.Printf("Cannot initialize repository %v\n", err)
+	}
+	if err = repository.Update(); err != nil {
+		log.Printf("Error updating repository %v\n", err)
+	}
 	config, err := repository.File(pc.Config)
 	if err != nil {
 		log.Printf("Cannot read configuration %v\n", err)
@@ -150,14 +156,7 @@ func (a defaultApp) addProject(pc projectConfig) {
 	if err != nil {
 		log.Printf("Cannot add project to container %v\n", err)
 	}
-	err = repository.Init()
-	if err != nil {
-		log.Printf("Cannot initialize repository %v\n", err)
-	}
-	err = repository.Update()
-	if err != nil {
-		log.Printf("Error updating repository %v\n", err)
-	}
+	log.Printf("Added project: %s - %s - %s\n", pc.Type, pc.Repository, pc.Config)
 }
 
 // New creates a new App from configuration
