@@ -8,8 +8,6 @@ import (
 	"os/exec"
 	"path"
 	"syscall"
-
-	"github.com/juhovuori/builder/fetcher"
 )
 
 // The fork executor is a simple executor that just runs the build script in a
@@ -22,19 +20,21 @@ type forkExecutor struct {
 	Env       []string
 }
 
-const scriptfilename = "script"
-
-func (f *forkExecutor) Run(stdout chan<- []byte) error {
+func (f *forkExecutor) Run(script []byte, stdout chan<- []byte) error {
 	var err error
-	if err = f.createDir(); err != nil {
+
+	filename := path.Join(f.Dir, "script")
+
+	if err = os.Mkdir(f.Dir, 0755); err != nil {
 		close(stdout)
 		return err
 	}
-	if err = f.copyScript(); err != nil {
+
+	if err = ioutil.WriteFile(filename, script, 0755); err != nil {
 		close(stdout)
 		return err
 	}
-	if err = f.run(stdout); err != nil {
+	if err = f.run(filename, stdout); err != nil {
 		close(stdout)
 		return err
 	}
@@ -45,23 +45,8 @@ func (f *forkExecutor) Cleanup() error {
 	return os.RemoveAll(f.Dir)
 }
 
-func (f *forkExecutor) createDir() error {
-	return os.Mkdir(f.Dir, 0755)
-}
-
-func (f *forkExecutor) copyScript() error {
-	data, err := fetcher.Fetch(f.ScriptURL)
-	if err != nil {
-		return err
-	}
-	filename := path.Join(f.Dir, scriptfilename)
-	err = ioutil.WriteFile(filename, data, 0755)
-	return err
-}
-
-func (f *forkExecutor) run(ch chan<- []byte) error {
+func (f *forkExecutor) run(filename string, ch chan<- []byte) error {
 	var err error
-	filename := path.Join(f.Dir, scriptfilename)
 	cmd := exec.Command(filename, f.Args...)
 	cmd.Dir = f.Dir
 	cmd.Stdin = nil

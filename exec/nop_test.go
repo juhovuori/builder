@@ -4,7 +4,7 @@ import "testing"
 
 func TestNopExecutor(t *testing.T) {
 	e := nopExecutor{}
-	err := e.Run(nil)
+	err := e.Run(nil, nil)
 	if err != nil {
 		t.Fatalf("Run returned error: %v\n", err)
 	}

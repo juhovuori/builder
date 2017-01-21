@@ -30,15 +30,22 @@ func TestNewFromFilename(t *testing.T) {
 }
 
 func TestTriggerBuild(t *testing.T) {
-	projectID := "id"
+	repoID := "152d085f-de7d-4503-911a-cc10995b0551"
 	projectURL := "1"
 	builds, err := build.NewContainer("memory")
 	if err != nil {
 		t.Fatal(err)
 	}
-	p := project.NewStaticProject(projectID)
-	projects := project.NewStaticContainer(p)
+	p, err := project.New("nop", projectURL, repoID, "testconfig.hcl", []byte{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	projects := project.NewContainer()
+	if err = projects.Add(p); err != nil {
+		t.Fatal(err)
+	}
 	repositories := repository.NewContainer()
+	repositories.Ensure("nop", projectURL)
 	config := Config{Projects: []projectConfig{{"nop", projectURL, "x"}}}
 	app := defaultApp{
 		projects,
@@ -46,11 +53,13 @@ func TestTriggerBuild(t *testing.T) {
 		builds,
 		config,
 	}
-	b, err := app.TriggerBuild(projectID)
+	b, err := app.TriggerBuild(p.ID())
 	if err != nil {
+		t.Logf("%+v\n", repositories)
+		t.Logf("%+v %+v %+v\n", p.ID(), p.VCS(), p.URL())
 		t.Fatalf("Unexpected error %v\n", err)
 	}
-	if b.ProjectID() != projectID {
+	if b.ProjectID() != p.ID() {
 		t.Errorf("Wrong buildID %v\n", b.ProjectID())
 	}
 }

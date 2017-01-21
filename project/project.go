@@ -13,6 +13,7 @@ type Project interface {
 
 // Manager represents the manager of a single project
 type Manager interface {
+	VCS() string
 	URL() string
 	Config() string
 	ID() string
@@ -28,20 +29,26 @@ type Attributes interface {
 
 // defaultProject is the main implementation of Project
 type defaultProject struct {
-	Purl         string `json:"url"`
 	Pid          string `json:"id"`
 	Perr         error  `json:"error"`
 	Pname        string `json:"name" hcl:"name"`
 	Pdescription string `json:"description" hcl:"description"`
 	Pscript      string `json:"script" hcl:"script"`
+	configfile   string
+	url          string
+	vcs          string
 }
 
 func (p *defaultProject) URL() string {
-	return p.Purl
+	return p.url
+}
+
+func (p *defaultProject) VCS() string {
+	return p.vcs
 }
 
 func (p *defaultProject) Config() string {
-	return "project.hcl"
+	return p.configfile
 }
 
 func (p *defaultProject) ID() string {
@@ -65,7 +72,7 @@ func (p *defaultProject) Script() string {
 }
 
 // New creates a new project from configuration string
-func New(repoID string, filename string, config []byte) (Project, error) {
+func New(VCS string, URL string, repoID string, filename string, config []byte) (Project, error) {
 	var p defaultProject
 	err := hcl.Decode(&p, string(config))
 	repoUUID, err2 := uuid.FromString(repoID)
@@ -73,6 +80,9 @@ func New(repoID string, filename string, config []byte) (Project, error) {
 		err = err2
 	}
 	p.Pid = uuid.NewV5(repoUUID, filename).String()
+	p.configfile = filename
 	p.Perr = err
+	p.vcs = VCS
+	p.url = URL
 	return &p, err
 }

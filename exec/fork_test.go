@@ -1,6 +1,7 @@
 package exec
 
 import (
+	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
@@ -32,7 +33,11 @@ func TestForkExecutor(t *testing.T) {
 			}
 		}()
 
-		err := e.Run(stdout)
+		data, err := ioutil.ReadFile(c.script)
+		if err != nil {
+			t.Error(i, err)
+		}
+		err = e.Run(data, stdout)
 		status := AsUnixStatusCode(err)
 		if status != c.status {
 			t.Errorf("%d: Got status: %v, expected %v\n", i, status, c.status)

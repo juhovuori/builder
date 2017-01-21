@@ -33,6 +33,7 @@ func (c *defaultContainer) Repository(Type Type, URL string) (Repository, error)
 
 func (c *defaultContainer) Ensure(t Type, URL string) (Repository, error) {
 	id := ID(t, URL)
+
 	if repository, ok := c.repositories[id]; ok {
 		return repository, nil
 	}

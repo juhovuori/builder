@@ -59,6 +59,14 @@ func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 	if err != nil {
 		return nil, err
 	}
+	repository, err := a.repositories.Repository(repository.Type(p.VCS()), p.URL())
+	if err != nil {
+		return nil, err
+	}
+	script, err := repository.File(p.Script())
+	if err != nil {
+		return nil, err
+	}
 	b, err := a.builds.New(p)
 	if err != nil {
 		return nil, err
@@ -81,9 +89,8 @@ func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 			a.builds.Output(b.ID(), data)
 		}
 	}()
-
 	go func() {
-		err := e.Run(stdout)
+		err := e.Run(script, stdout)
 		exitStatus := exec.AsUnixStatusCode(err)
 		log.Printf("Exit %d\n", exitStatus)
 		if !b.Completed() {
@@ -134,7 +141,7 @@ func (a defaultApp) addProject(pc projectConfig) {
 	if err != nil {
 		log.Printf("Cannot read configuration %v\n", err)
 	}
-	p, err := project.New(repository.ID(), pc.Config, config)
+	p, err := project.New(string(repository.Type()), repository.URL(), repository.ID(), pc.Config, config)
 	if err != nil {
 		log.Printf("Cannot create project: %v\n", err)
 		return

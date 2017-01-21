@@ -7,6 +7,6 @@ import (
 )
 
 func tmpFilenameByID(id string) string {
-	dir := path.Join(os.TempDir(), fmt.Sprintf("builder-%s", id))
+	dir := path.Join(os.TempDir(), fmt.Sprintf("builder-repo-%s", id))
 	return dir
 }

@@ -27,7 +27,7 @@ func TestNewProject(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		p, err := New(repoUUID, c.filename, data)
+		p, err := New("", "", repoUUID, c.filename, data)
 		if c.success != (err == nil) {
 			t.Errorf("%d: Got unexpected error %v\n", i, err)
 		}
@@ -49,7 +49,7 @@ func TestAccessors(t *testing.T) {
 	description = "description"
 	script = "script"
 	`
-	p, err := New(repoUUID, "", []byte(cfg))
+	p, err := New("", "", repoUUID, "", []byte(cfg))
 	if err != nil {
 		t.Errorf("Unexpected error %v\n", err)
 	}
