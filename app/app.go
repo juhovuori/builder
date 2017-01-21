@@ -10,6 +10,7 @@ import (
 	"github.com/juhovuori/builder/build"
 	"github.com/juhovuori/builder/exec"
 	"github.com/juhovuori/builder/project"
+	"github.com/juhovuori/builder/repository"
 	"github.com/juhovuori/builder/version"
 )
 
@@ -28,9 +29,10 @@ type App interface {
 }
 
 type defaultApp struct {
-	projects project.Container
-	builds   build.Container
-	cfg      Config
+	projects     project.Container
+	repositories repository.Container
+	builds       build.Container
+	cfg          Config
 }
 
 func (a defaultApp) Config() Config {
@@ -161,8 +163,12 @@ func New(cfg Config) (App, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	repositories := repository.NewContainer()
+
 	newApp := defaultApp{
 		projects,
+		repositories,
 		builds,
 		cfg,
 	}

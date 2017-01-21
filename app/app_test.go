@@ -6,6 +6,7 @@ import (
 
 	"github.com/juhovuori/builder/build"
 	"github.com/juhovuori/builder/project"
+	"github.com/juhovuori/builder/repository"
 )
 
 func TestNewFromFilename(t *testing.T) {
@@ -37,10 +38,12 @@ func TestTriggerBuild(t *testing.T) {
 	}
 	p := project.NewStaticProject(projectID)
 	projects := project.NewStaticContainer(p)
+	repositories := repository.NewContainer()
 	cfg := builderCfg{Projects: []string{projectURL}}
 	config := cfgManager{&cfg}
 	app := defaultApp{
 		projects,
+		repositories,
 		builds,
 		config,
 	}
