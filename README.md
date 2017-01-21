@@ -52,17 +52,33 @@ Getting there...
 
 ### Project configuration
 ...
+
+## The build script
+
+Before the build starts, the user defined build script is copied into build working directory as file `script`. That script is then started and it defines the build process.
+
+The `builder` executable is guaranteed to be in path for the script, so that can be used to communicate with builder. E.g. a new build stage is added by `echo my data | builder client stage my-stage`
+
+Build finishes when the script finishes. If the script exits with status code 0, the build is considered a success. Otherwise its considered a failure.
+
+### Environment
+`BUILDER_URL` is the URL of builder server. This is used by builder client transparently.
+
+`BUILDER_BUILD_ID` is the id of current build.
+
+`BUILDER_TOKEN` may be set and it can be used to access privileged operations such as server shutdown.
+
+
 ## TODO ideas
 - websocket
 - CLI
 - Tokens
-    - system token
-        - Graceful shutdown
     - build token
 - Better logging
 - Migrations
 - Notifications:
     - push notifications about build stage changes to other agents
+    - github state api
     - http
     - something else?
 - RESTify API. IDs => URLs, etc.
@@ -73,7 +89,7 @@ Getting there...
 - Query executors
 - Configuration refresh during trigger
 - ProjectID instead of string, etc.
-- Confirm thread safety -- an issue with pipeOutput
+- Confirm thread safety
 
 - Organization manager
     - provides a web interface for creating organisations and running builder for each org
