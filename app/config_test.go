@@ -23,8 +23,8 @@ func TestNewConfig(t *testing.T) {
 		if c.err != "<nil>" {
 			continue
 		}
-		if cfg.ServerAddress() != c.addr {
-			t.Errorf("%d: Got %s, expected%s\n", i, cfg.ServerAddress(), c.addr)
+		if cfg.ServerAddress != c.addr {
+			t.Errorf("%d: Got %s, expected%s\n", i, cfg.ServerAddress, c.addr)
 		}
 	}
 }

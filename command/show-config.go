@@ -31,9 +31,9 @@ func (cmd *ShowConfig) Run(args []string) int {
 		return 1
 	}
 
-	log.Printf("Server address %+v\n", cfg.ServerAddress())
-	log.Printf("Projects %+v\n", cfg.Projects())
-	log.Printf("Build %+v\n", cfg.Store())
+	log.Printf("Server address %+v\n", cfg.ServerAddress)
+	log.Printf("Projects %+v\n", cfg.Projects)
+	log.Printf("Build %+v\n", cfg.Store)
 	return 0
 }
 

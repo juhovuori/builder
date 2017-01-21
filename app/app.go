@@ -66,7 +66,7 @@ func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 	}
 	env := []string{
 		fmt.Sprintf("BUILD_ID=%s", b.ID()),
-		fmt.Sprintf("URL=%s", a.cfg.URL()),
+		fmt.Sprintf("URL=%s", a.cfg.URL),
 	}
 	e, err := exec.NewWithEnvironment(b, append(os.Environ(), env...))
 	if err != nil {
@@ -154,17 +154,21 @@ func (a defaultApp) Version() version.Info {
 
 // New creates a new App from configuration
 func New(cfg Config) (App, error) {
-	projects, err := project.NewContainer(cfg.Projects())
-	if err != nil {
-		return nil, err
-	}
-
-	builds, err := build.NewContainer(cfg.Store())
+	builds, err := build.NewContainer(cfg.Store)
 	if err != nil {
 		return nil, err
 	}
 
 	repositories := repository.NewContainer()
+
+	projects := project.NewContainer()
+	for _, p := range cfg.Projects {
+		project, err := project.NewProject(p.Repository)
+		if err != nil {
+			log.Printf("Could not create project %s: %v\n", p.Repository, err)
+		}
+		projects.Add(project)
+	}
 
 	newApp := defaultApp{
 		projects,

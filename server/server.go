@@ -21,7 +21,7 @@ type echoServer struct {
 }
 
 func (s echoServer) Run() error {
-	return s.echo.Start(s.app.Config().ServerAddress())
+	return s.echo.Start(s.app.Config().ServerAddress)
 }
 
 func (s echoServer) setupRouteHandlers() error {

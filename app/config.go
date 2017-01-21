@@ -7,55 +7,34 @@ import (
 	"github.com/juhovuori/builder/fetcher"
 )
 
-// Config is the server configuration container
-type Config interface {
-	ServerAddress() string
-	URL() string
-	Projects() []string
-	Store() string
+// Config is the builder configuration
+type Config struct {
+	ServerAddress string          `hcl:"bind_addr"`
+	URL           string          `hcl:"url"`
+	Projects      []projectConfig `hcl:"projects"`
+	Store         string          `hcl:"store"`
 }
 
-type builderCfg struct {
-	ServerAddress string   `hcl:"bind_addr"`
-	URL           string   `hcl:"url"`
-	Projects      []string `hcl:"projects"`
-	Store         string   `hcl:"store"`
-}
-
-type cfgManager struct {
-	cfg *builderCfg
-}
-
-func (cm cfgManager) ServerAddress() string {
-	return cm.cfg.ServerAddress
-}
-
-func (cm cfgManager) URL() string {
-	return cm.cfg.URL
-}
-
-func (cm cfgManager) Projects() []string {
-	return cm.cfg.Projects
-}
-
-func (cm cfgManager) Store() string {
-	return cm.cfg.Store
+type projectConfig struct {
+	Type       string `hcl:"type"`
+	Repository string `hcl:"repository"`
+	Config     string `hcl:"config"`
 }
 
 // FromString creates a Cfg from string.
 func FromString(input string) (Config, error) {
-	var cfg builderCfg
+	var cfg Config
 	if err := hcl.Decode(&cfg, input); err != nil {
-		return nil, fmt.Errorf("Failed to parse configuration: %v", err)
+		return cfg, fmt.Errorf("Failed to parse configuration: %v", err)
 	}
-	return cfgManager{&cfg}, nil
+	return cfg, nil
 }
 
 // NewConfig creates a new configuration manager from given URL / filename
 func NewConfig(filename string) (Config, error) {
 	bytes, err := fetcher.Fetch(filename)
 	if err != nil {
-		return nil, err
+		return Config{}, err
 	}
 	return FromString(string(bytes))
 }

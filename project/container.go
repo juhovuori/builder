@@ -1,11 +1,10 @@
 package project
 
-import "log"
-
 // Container is the project manager
 type Container interface {
 	Projects() []string
 	Project(string) (Project, error)
+	Add(project Project) error
 }
 
 type defaultContainer struct {
@@ -28,20 +27,17 @@ func (c *defaultContainer) Project(projectID string) (Project, error) {
 	return p, nil
 }
 
-// NewContainer creates a new project manager
-func NewContainer(projects []string) (Container, error) {
-	c := &defaultContainer{map[string]Project{}}
-	for _, URL := range projects {
-		project, err := NewProject(URL)
-		if err != nil {
-			log.Printf("Could not create project %s: %v\n", URL, err)
-		}
-		id := project.ID()
-		if _, ok := c.projects[id]; ok {
-			log.Printf("Duplicate project %s: %v\n", URL, err)
-			// TODO: return error
-		}
-		c.projects[id] = project
+func (c *defaultContainer) Add(project Project) error {
+	id := project.ID()
+	if _, ok := c.projects[id]; ok {
+		return ErrDuplicate
 	}
-	return c, nil
+	c.projects[id] = project
+	return nil
+}
+
+// NewContainer creates a new project manager
+func NewContainer() Container {
+	c := &defaultContainer{map[string]Project{}}
+	return c
 }
