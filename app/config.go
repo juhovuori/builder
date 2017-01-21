@@ -13,6 +13,7 @@ type Config struct {
 	URL           string          `hcl:"url"`
 	Projects      []projectConfig `hcl:"projects"`
 	Store         string          `hcl:"store"`
+	Verbose       bool            `hcl:"verbose"`
 }
 
 type projectConfig struct {

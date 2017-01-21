@@ -89,6 +89,9 @@ func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 	stdout := make(chan []byte)
 	go func() {
 		for data := range stdout {
+			if a.Config().Verbose {
+				log.Printf(">%s", string(data))
+			}
 			a.builds.Output(b.ID(), data)
 		}
 	}()
