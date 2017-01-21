@@ -71,8 +71,7 @@ func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = a.builds.AddStage(b.ID(), build.StartStage())
-	if err != nil {
+	if err = a.builds.AddStage(b.ID(), build.StartStage()); err != nil {
 		return nil, err
 	}
 
@@ -131,7 +130,11 @@ func (a defaultApp) addProject(pc projectConfig) {
 	if err != nil {
 		log.Printf("Cannot add repository %v\n", err)
 	}
-	p, err := project.New(pc.Repository)
+	config, err := repository.File(pc.Config)
+	if err != nil {
+		log.Printf("Cannot read configuration %v\n", err)
+	}
+	p, err := project.New(string(config))
 	if err != nil {
 		log.Printf("Cannot create project: %v\n", err)
 		return

@@ -7,6 +7,7 @@ type Repository interface {
 	ID() string
 	Type() Type
 	URL() string
+	File(filename string) ([]byte, error)
 	Update() error
 	Init() error
 	Cleanup() error

@@ -17,6 +17,10 @@ func (r *nopRepository) ID() string {
 	return r.id
 }
 
+func (r *nopRepository) File(filename string) ([]byte, error) {
+	return []byte{}, nil
+}
+
 func (r *nopRepository) Init() error {
 	return nil
 }

@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"io/ioutil"
 	"os"
 	"testing"
 )
@@ -19,17 +18,10 @@ func TestGit(t *testing.T) {
 		t.Error(err)
 	}
 
-	filename := r.dir + "/test"
-
-	f, err := os.Open(filename)
+	data, err := r.File("test")
 	if err != nil {
 		t.Error(err)
 	}
-	data, err := ioutil.ReadAll(f)
-	if err != nil {
-		t.Error(err)
-	}
-	f.Close()
 	if string(data) != "ok\n" {
 		t.Errorf("Read invalid data %s\n", string(data))
 	}
@@ -45,9 +37,8 @@ func TestGit(t *testing.T) {
 		t.Error(err)
 	}
 
-	f, err = os.Open(filename)
+	_, err = r.File("test")
 	if !os.IsNotExist(err) {
 		t.Errorf("Expected not exist error, got %v\n", err)
 	}
-	f.Close()
 }

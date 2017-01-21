@@ -1,8 +1,10 @@
 package repository
 
 import (
+	"io/ioutil"
 	"os"
 	"os/exec"
+	"path"
 )
 
 type gitRepository struct {
@@ -21,6 +23,19 @@ func (r *gitRepository) URL() string {
 
 func (r *gitRepository) ID() string {
 	return r.id
+}
+
+func (r *gitRepository) File(relative string) ([]byte, error) {
+	// TODO: ensure we are not leaking files through
+	// symlinks or "../foo"
+	filename := path.Join(r.dir, relative)
+	f, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	data, err := ioutil.ReadAll(f)
+	f.Close()
+	return data, err
 }
 
 func (r *gitRepository) Init() error {
