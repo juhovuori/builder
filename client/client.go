@@ -50,7 +50,7 @@ func (c httpClient) Build(projectID string) (string, error) {
 }
 
 func (c httpClient) AddStage(stage string, data io.Reader) error {
-	url := fmt.Sprintf("%s/v1/build/%s", c.url, c.buildID)
+	url := fmt.Sprintf("%s/v1/builds/%s", c.url, c.buildID)
 	resp, err := http.Post(url, "text/plain", data)
 	if err != nil {
 		return err

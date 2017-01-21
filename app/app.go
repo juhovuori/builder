@@ -72,8 +72,8 @@ func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 		return nil, err
 	}
 	env := []string{
-		fmt.Sprintf("BUILD_ID=%s", b.ID()),
-		fmt.Sprintf("URL=%s", a.cfg.URL),
+		fmt.Sprintf("BUILDER_BUILD_ID=%s", b.ID()),
+		fmt.Sprintf("BUILDER_URL=%s", a.cfg.URL),
 	}
 	e, err := exec.NewWithEnvironment(b, append(os.Environ(), env...))
 	if err != nil {
