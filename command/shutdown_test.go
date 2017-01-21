@@ -10,7 +10,7 @@ import (
 
 func TestClient(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(handlerFactory(200, "OK")))
-	cmd, err := ClientFactory()
+	cmd, err := ShutdownFactory()
 	if err != nil {
 		t.Fatalf("Factory returned error %v\n", err)
 	}
@@ -23,9 +23,8 @@ func TestClient(t *testing.T) {
 		t.Fatalf("Too brief help %s\n", h)
 	}
 	os.Setenv("BUILDER_URL", server.URL)
-	os.Setenv("BUILDER_BUILDID", "2")
 	os.Setenv("BUILDER_TOKEN", "3")
-	status := cmd.Run([]string{"shutdown"})
+	status := cmd.Run([]string{})
 	if status != 0 {
 		t.Fatalf("Non-zero exit status %d\n", status)
 	}

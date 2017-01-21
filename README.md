@@ -57,7 +57,7 @@ Getting there...
 
 Before the build starts, the user defined build script is copied into build working directory as file `script`. That script is then started and it defines the build process.
 
-The `builder` executable is guaranteed to be in path for the script, so that can be used to communicate with builder. E.g. a new build stage is added by `echo my data | builder client stage my-stage`
+The `builder` executable is guaranteed to be in path for the script, so that can be used to communicate with builder. E.g. a new build stage is added by `echo my data | builder add-stage my-stage`
 
 Build finishes when the script finishes. If the script exits with status code 0, the build is considered a success. Otherwise its considered a failure.
 
