@@ -33,42 +33,28 @@ func (f *forkExecutor) SaveFile(relative string, data []byte) error {
 }
 
 func (f *forkExecutor) Run(relative string, stdout chan<- []byte) error {
-	filename := path.Join(f.Dir, relative)
-	if err := f.run(filename, stdout); err != nil {
-		close(stdout)
-		return err
-	}
-	return nil
-}
-
-func (f *forkExecutor) Directory() string {
-	return f.Dir
-}
-
-func (f *forkExecutor) Cleanup() error {
-	return os.RemoveAll(f.Dir)
-}
-
-func (f *forkExecutor) run(filename string, ch chan<- []byte) error {
 	var err error
+	filename := path.Join(f.Dir, relative)
 	cmd := exec.Command(filename, f.Args...)
 	cmd.Dir = f.Dir
 	cmd.Stdin = nil
 	cmd.Env = append(os.Environ(), f.Env...)
-	stdout, err := cmd.StdoutPipe()
+	reader, err := cmd.StdoutPipe()
 	if err != nil {
+		close(stdout)
 		return err
 	}
 	cmd.Stderr = cmd.Stdout
 	if err := cmd.Start(); err != nil {
+		close(stdout)
 		return err
 	}
 
 	buf := make([]byte, 1024)
 	for {
-		n, err := stdout.Read(buf)
+		n, err := reader.Read(buf)
 		if n != 0 {
-			ch <- buf[:n]
+			stdout <- buf[:n]
 		}
 		if err != nil {
 			if err != io.EOF {
@@ -77,8 +63,15 @@ func (f *forkExecutor) run(filename string, ch chan<- []byte) error {
 			break
 		}
 	}
-
 	return cmd.Wait()
+}
+
+func (f *forkExecutor) Directory() string {
+	return f.Dir
+}
+
+func (f *forkExecutor) Cleanup() error {
+	return os.RemoveAll(f.Dir)
 }
 
 // AsUnixStatusCode takes an error and resolves Unix status code from it
