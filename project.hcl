@@ -1,5 +1,3 @@
 name = "Builder"
 description = "Builder build automation software"
-type = "git"
-url = "https://github.com/juhovuori/builder.git"
-script = "https://raw.githubusercontent.com/juhovuori/builder/master/scripts/build.sh"
+script = "scripts/build.sh"

@@ -6,7 +6,12 @@ url = "http://builder.juhovuori.net"
 
 # List of projects to manage
 projects = [
-  "https://raw.githubusercontent.com/juhovuori/builder/master/project.hcl"
+  {
+    type = "git"
+    repository = "git@github.com:juhovuori/builder.git"
+    # repository = "https://github.com/juhovuori/builder.git"
+    config = "project.hcl"
+  }
 ]
 
 store = "sqlite:/tmp/builder-prod.db"
