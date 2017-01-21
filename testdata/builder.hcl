@@ -5,11 +5,31 @@ url = "http://localhost:8080"
 
 # List of projects to manage
 projects = [
-  "testdata/success.hcl",
-  "testdata/failure.hcl",
-  "testdata/delay100s.hcl",
-  "testdata/stages.hcl",
-  "testdata/output.hcl"
+  {
+    type = "git"
+    repository = "testdata/repository.git",
+    config = "success.hcl"
+  },
+  {
+    type = "git"
+    repository = "testdata/repository.git",
+    config = "failure.hcl"
+  },
+  {
+    type = "git"
+    repository = "testdata/repository.git",
+    config = "delay100s.hcl"
+  },
+  {
+    type = "git"
+    repository = "testdata/repository.git",
+    config = "stages.hcl"
+  },
+  {
+    type = "git"
+    repository = "testdata/repository.git",
+    config = "output.hcl"
+  }
 ]
 
 store = "sqlite:/tmp/builder-prod.db"

@@ -1,0 +1,20 @@
+Test projects
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+#
+# Initial commit
+#
+# Changes to be committed:
+#	new file:   delay100s.hcl
+#	new file:   delay100s.sh
+#	new file:   failure.hcl
+#	new file:   failure.sh
+#	new file:   output.hcl
+#	new file:   output.sh
+#	new file:   stages.hcl
+#	new file:   stages.sh
+#	new file:   success.hcl
+#	new file:   success.sh
+#
