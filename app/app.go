@@ -2,7 +2,6 @@ package app
 
 import (
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"time"
@@ -81,51 +80,35 @@ func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 	if err != nil {
 		return nil, err
 	}
-	ch, err := e.Run()
-	if err != nil {
-		return nil, err
-	}
-	go a.pipeOutput(b.ID(), e.Stdout())
-	go a.monitorExit(b.ID(), ch)
+	stdout := make(chan []byte)
+	go func() {
+		for data := range stdout {
+			a.builds.Output(b.ID(), data)
+		}
+	}()
+
+	go func() {
+		err := e.Run(stdout)
+		exitStatus := exec.AsUnixStatusCode(err)
+		log.Printf("Exit %d\n", exitStatus)
+		if !b.Completed() {
+			t := build.SUCCESS
+			if exitStatus != 0 {
+				t = build.FAILURE
+			}
+			lastStage := build.Stage{
+				Type:      t,
+				Name:      "end-of-script",
+				Timestamp: time.Now().UnixNano(),
+			}
+			err := a.builds.AddStage(b.ID(), lastStage)
+			if err != nil {
+				log.Printf("Could not add final stage.%v\n", err)
+			}
+		}
+	}()
+
 	return b, nil
-}
-
-func (a defaultApp) pipeOutput(buildID string, stdout io.Reader) {
-	buf := make([]byte, 1024)
-	for {
-		n, err := stdout.Read(buf)
-		if n != 0 {
-			a.builds.Output(buildID, buf[:n])
-		}
-		if err == nil {
-			continue
-		}
-		if err != io.EOF {
-			log.Printf("Error reading stdout: %v\n", err)
-		}
-		break
-
-	}
-}
-
-func (a defaultApp) monitorExit(buildID string, ch <-chan int) {
-	exitStatus := <-ch
-	log.Printf("Exit %d\n", exitStatus)
-	if b, _ := a.builds.Build(buildID); !b.Completed() {
-		t := build.SUCCESS
-		if exitStatus != 0 {
-			t = build.FAILURE
-		}
-		lastStage := build.Stage{
-			Type:      t,
-			Name:      "end-of-script",
-			Timestamp: time.Now().UnixNano(),
-		}
-		err := a.builds.AddStage(buildID, lastStage)
-		if err != nil {
-			log.Printf("Could not add final stage.%v\n", err)
-		}
-	}
 }
 
 //AddStage adds a build stage

@@ -20,32 +20,29 @@ type forkExecutor struct {
 	ScriptURL string
 	Args      []string
 	Env       []string
-	stdout    io.Reader
 }
 
 const scriptfilename = "script"
 
-func (f *forkExecutor) Run() (<-chan int, error) {
+func (f *forkExecutor) Run(stdout chan<- []byte) error {
 	var err error
-	ch := make(chan int)
 	if err = f.createDir(); err != nil {
-		return nil, err
+		close(stdout)
+		return err
 	}
 	if err = f.copyScript(); err != nil {
-		return nil, err
+		close(stdout)
+		return err
 	}
-	if err = f.run(ch); err != nil {
-		return nil, err
+	if err = f.run(stdout); err != nil {
+		close(stdout)
+		return err
 	}
-	return ch, nil
+	return nil
 }
 
 func (f *forkExecutor) Cleanup() error {
 	return os.RemoveAll(f.Dir)
-}
-
-func (f *forkExecutor) Stdout() io.Reader {
-	return f.stdout
 }
 
 func (f *forkExecutor) createDir() error {
@@ -62,14 +59,14 @@ func (f *forkExecutor) copyScript() error {
 	return err
 }
 
-func (f *forkExecutor) run(ch chan<- int) error {
+func (f *forkExecutor) run(ch chan<- []byte) error {
 	var err error
 	filename := path.Join(f.Dir, scriptfilename)
 	cmd := exec.Command(filename, f.Args...)
 	cmd.Dir = f.Dir
 	cmd.Stdin = nil
 	cmd.Env = append(os.Environ(), f.Env...)
-	f.stdout, err = cmd.StdoutPipe()
+	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		return err
 	}
@@ -77,27 +74,39 @@ func (f *forkExecutor) run(ch chan<- int) error {
 	if err := cmd.Start(); err != nil {
 		return err
 	}
-	go f.monitor(ch, cmd)
-	return nil
+
+	buf := make([]byte, 1024)
+	for {
+		n, err := stdout.Read(buf)
+		if n != 0 {
+			ch <- buf[:n]
+		}
+		if err != nil {
+			if err != io.EOF {
+				log.Printf("Error reading stdout: %v\n", err)
+			}
+			break
+		}
+	}
+
+	return cmd.Wait()
 }
 
-func (f *forkExecutor) monitor(ch chan<- int, cmd *exec.Cmd) {
-	if err := cmd.Wait(); err != nil {
-		var exitErr *exec.ExitError
-		var status syscall.WaitStatus
-		var ok bool
-		if exitErr, ok = err.(*exec.ExitError); !ok {
-			log.Printf("Got unexpected error while waiting for child process %v\n", err)
-			ch <- -1
-			return
-		}
-		if status, ok = exitErr.Sys().(syscall.WaitStatus); !ok {
-			log.Println("ExitError was not a WaitStatus. Is this Unix?")
-			ch <- -2
-			return
-		}
-		ch <- status.ExitStatus()
-		return
+// AsUnixStatusCode takes an error and resolves Unix status code from it
+func AsUnixStatusCode(err error) int {
+	var exitErr *exec.ExitError
+	var status syscall.WaitStatus
+	var ok bool
+	if err == nil {
+		return 0
 	}
-	ch <- 0
+	if exitErr, ok = err.(*exec.ExitError); !ok {
+		log.Printf("Got unexpected error %v\n", err)
+		return -1
+	}
+	if status, ok = exitErr.Sys().(syscall.WaitStatus); !ok {
+		log.Println("ExitError was not a WaitStatus. Is this Unix?")
+		return -2
+	}
+	return status.ExitStatus()
 }
