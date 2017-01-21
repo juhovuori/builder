@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FILES="builder"
+FILES="builder builder.hcl"
 
 
 mkdir -p deploy

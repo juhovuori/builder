@@ -12,7 +12,7 @@ version:
 build: version
 	go build
 
-publish: version
+publish: build
 	./scripts/publish.sh
 
 deploy:

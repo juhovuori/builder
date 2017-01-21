@@ -8,8 +8,7 @@ url = "http://builder.juhovuori.net"
 projects = [
   {
     type = "git"
-    repository = "git@github.com:juhovuori/builder.git"
-    # repository = "https://github.com/juhovuori/builder.git"
+    repository = "https://github.com/juhovuori/builder.git"
     config = "project.hcl"
   }
 ]
