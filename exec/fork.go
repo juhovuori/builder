@@ -32,10 +32,9 @@ func (f *forkExecutor) SaveFile(relative string, data []byte) error {
 	return ioutil.WriteFile(filename, data, 0755)
 }
 
-func (f *forkExecutor) Run(filename string, stdout chan<- []byte) error {
-	var err error
-
-	if err = f.run(filename, stdout); err != nil {
+func (f *forkExecutor) Run(relative string, stdout chan<- []byte) error {
+	filename := path.Join(f.Dir, relative)
+	if err := f.run(filename, stdout); err != nil {
 		close(stdout)
 		return err
 	}
