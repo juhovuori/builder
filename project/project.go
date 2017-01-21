@@ -2,8 +2,6 @@ package project
 
 import (
 	"github.com/hashicorp/hcl"
-	"github.com/juhovuori/builder/fetcher"
-	"github.com/juhovuori/builder/repository"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -16,7 +14,6 @@ type Project interface {
 // Manager represents the manager of a single project
 type Manager interface {
 	URL() string
-	Repository() repository.Repository
 	Config() string
 	ID() string
 	Err() error
@@ -47,10 +44,6 @@ func (p *defaultProject) Config() string {
 	return "project.hcl"
 }
 
-func (p *defaultProject) Repository() repository.Repository {
-	return nil
-}
-
 func (p *defaultProject) ID() string {
 	return p.Pid
 }
@@ -71,33 +64,15 @@ func (p *defaultProject) Script() string {
 	return p.Pscript
 }
 
-func fetchConfig(filename string) (string, error) {
-	bytes, err := fetcher.Fetch(filename)
-	return string(bytes), err
-}
-
-func newProject(config string, URL string, err error) (*defaultProject, error) {
+// New creates a new project from configuration string
+func New(repoID string, filename string, config []byte) (Project, error) {
 	var p defaultProject
-	err2 := hcl.Decode(&p, config)
-	if err == nil {
+	err := hcl.Decode(&p, string(config))
+	repoUUID, err2 := uuid.FromString(repoID)
+	if err2 != nil {
 		err = err2
 	}
-	p.Purl = URL
-	p.Pid = uuid.NewV5(namespace, URL).String()
+	p.Pid = uuid.NewV5(repoUUID, filename).String()
 	p.Perr = err
 	return &p, err
 }
-
-// NewProject creates a new project
-func NewProject(URL string) (Project, error) {
-	config, err := fetchConfig(URL)
-	return newProject(config, URL, err)
-}
-
-// New creates a new project from configuration string
-func New(config string) (Project, error) {
-	return newProject(config, "", nil)
-}
-
-// namespace is a global namespace for project ID generation.
-var namespace, _ = uuid.FromString("a7cf1c8b-7b5e-4216-85d3-877e16845ebb")

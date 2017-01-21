@@ -29,13 +29,7 @@ func (r *gitRepository) File(relative string) ([]byte, error) {
 	// TODO: ensure we are not leaking files through
 	// symlinks or "../foo"
 	filename := path.Join(r.dir, relative)
-	f, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-	data, err := ioutil.ReadAll(f)
-	f.Close()
-	return data, err
+	return ioutil.ReadFile(filename)
 }
 
 func (r *gitRepository) Init() error {

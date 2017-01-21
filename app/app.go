@@ -134,7 +134,7 @@ func (a defaultApp) addProject(pc projectConfig) {
 	if err != nil {
 		log.Printf("Cannot read configuration %v\n", err)
 	}
-	p, err := project.New(string(config))
+	p, err := project.New(repository.ID(), pc.Config, config)
 	if err != nil {
 		log.Printf("Cannot create project: %v\n", err)
 		return

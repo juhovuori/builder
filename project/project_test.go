@@ -1,12 +1,15 @@
 package project
 
-import "testing"
+import (
+	"io/ioutil"
+	"testing"
+)
 
 func TestNewProject(t *testing.T) {
 	cases := []struct {
-		url     string
-		success bool
-		script  string
+		filename string
+		success  bool
+		script   string
 	}{
 		{
 			"testdata/project.hcl",
@@ -18,14 +21,13 @@ func TestNewProject(t *testing.T) {
 			false,
 			"",
 		},
-		{
-			"testdata/nothing-here.hcl",
-			false,
-			"",
-		},
 	}
 	for i, c := range cases {
-		p, err := NewProject(c.url)
+		data, err := ioutil.ReadFile(c.filename)
+		if err != nil {
+			t.Error(err)
+		}
+		p, err := New(repoUUID, c.filename, data)
 		if c.success != (err == nil) {
 			t.Errorf("%d: Got unexpected error %v\n", i, err)
 		}
@@ -38,19 +40,16 @@ func TestNewProject(t *testing.T) {
 		if p.Script() != c.script {
 			t.Errorf("%d: Got script %s, expected %s\n", i, p.Script(), c.script)
 		}
-		if p.URL() != c.url {
-			t.Errorf("%d: Got URL %s, expected %s\n", i, p.URL(), c.url)
-		}
 	}
 }
 
-func TestNewFromStringAndAccessors(t *testing.T) {
+func TestAccessors(t *testing.T) {
 	cfg := `
 	name = "name"
 	description = "description"
 	script = "script"
 	`
-	p, err := New(cfg)
+	p, err := New(repoUUID, "", []byte(cfg))
 	if err != nil {
 		t.Errorf("Unexpected error %v\n", err)
 	}
@@ -60,8 +59,8 @@ func TestNewFromStringAndAccessors(t *testing.T) {
 	if p.URL() != "" {
 		t.Errorf("Got URL %s, expected %s\n", p.URL(), "")
 	}
-	if p.ID() != "b18cfe21-db37-5154-951b-4359cbefd080" {
-		t.Errorf("Got ID %s, expected %s\n", p.ID(), "b18cfe21-db37-5154-951b-4359cbefd080")
+	if p.ID() != "ae715c65-c4ad-5e1c-b800-82e0300b740a" {
+		t.Errorf("Got ID %s, expected %s\n", p.ID(), "ae715c65-c4ad-5e1c-b800-82e0300b740a")
 	}
 	if p.Name() != "name" {
 		t.Errorf("Got Name %s, expected %s\n", p.Name(), "")
@@ -70,3 +69,5 @@ func TestNewFromStringAndAccessors(t *testing.T) {
 		t.Errorf("Got Description %s, expected %s\n", p.Description(), "")
 	}
 }
+
+var repoUUID = "e787cc6c-4840-413e-a3ee-07b9b045e809"
