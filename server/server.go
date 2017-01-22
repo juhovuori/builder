@@ -37,6 +37,7 @@ func (s echoServer) setupRouteHandlers() error {
 	s.echo.GET("/v1/builds/:id/data/:stage", s.hGetStageData)
 	s.echo.GET("/v1/projects", s.hListProjects)
 	s.echo.GET("/v1/projects/:id", s.hGetProject)
+	s.echo.GET("/v1/projects/:id/builds", s.hListProjectBuilds)
 	s.echo.POST("/v1/projects/:id/trigger", s.hTriggerBuild)
 	s.echo.GET("/v1/version", s.hVersion)
 	s.echo.POST("/v1/shutdown", s.hShutdown)

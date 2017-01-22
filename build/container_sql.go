@@ -44,10 +44,19 @@ func (c sqlContainer) Close() error {
 	return c.db.Close()
 }
 
-func (c *sqlContainer) Builds() []string {
+func (c *sqlContainer) Builds(projectID *string) []string {
+	var rows *sql.Rows
+	var stmt *sql.Stmt
+	var err error
 	builds := []string{}
-
-	rows, err := c.db.Query("select id from builds order by created desc")
+	if projectID == nil {
+		rows, err = c.db.Query("select id from builds order by created desc")
+	} else {
+		stmt, err = c.db.Prepare("select id from builds where projectid = ? order by created desc")
+		if err == nil {
+			rows, err = stmt.Query(*projectID)
+		}
+	}
 	if err != nil {
 		log.Println(err)
 		return nil

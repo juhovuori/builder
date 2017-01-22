@@ -36,7 +36,13 @@ func (s *echoServer) hCreateBuild(c echo.Context) error {
 }
 
 func (s *echoServer) hListBuilds(c echo.Context) error {
-	builds := s.app.Builds()
+	builds := s.app.Builds(nil)
+	return c.JSON(http.StatusOK, builds)
+}
+
+func (s *echoServer) hListProjectBuilds(c echo.Context) error {
+	projectID := c.Param("id")
+	builds := s.app.Builds(&projectID)
 	return c.JSON(http.StatusOK, builds)
 }
 

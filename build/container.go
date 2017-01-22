@@ -7,7 +7,7 @@ type Container interface {
 	Init() error
 	Close() error
 	Purge() error
-	Builds() []string
+	Builds(projectID *string) []string
 	Build(ID string) (Build, error)
 	New(b Buildable) (Build, error)
 	AddStage(buildID string, stage Stage) error

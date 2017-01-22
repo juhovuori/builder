@@ -40,7 +40,7 @@ func TestContainer(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		bs := container.Builds()
+		bs := container.Builds(nil)
 		if len(bs) != 0 {
 			t.Errorf("%d: Expected empty container, got %d builds\n", i, len(bs))
 		}
@@ -62,10 +62,20 @@ func TestContainer(t *testing.T) {
 			t.Errorf("%d: before %d, created %d, after %d\n", i, before, newB.Created(), after)
 		}
 
-		container.Builds()
-		bs = container.Builds()
+		container.Builds(nil)
+		bs = container.Builds(nil)
 		if len(bs) != 1 {
 			t.Errorf("%d: Expected 1 build, got %d builds\n", i, len(bs))
+		}
+		pid := newB.ProjectID()
+		bs = container.Builds(&pid)
+		if len(bs) != 1 {
+			t.Errorf("%d: Expected 1 build, got %d builds\n", i, len(bs))
+		}
+		pid = "invalid"
+		bs = container.Builds(&pid)
+		if len(bs) != 0 {
+			t.Errorf("%d: Expected 0 builds, got %d builds\n", i, len(bs))
 		}
 
 		stages := []Stage{

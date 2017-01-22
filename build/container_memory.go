@@ -16,10 +16,12 @@ func (c memoryContainer) Close() error {
 	return nil
 }
 
-func (c memoryContainer) Builds() []string {
+func (c memoryContainer) Builds(projectID *string) []string {
 	builds := []string{}
-	for ID := range c.builds {
-		builds = append(builds, ID)
+	for ID, b := range c.builds {
+		if projectID == nil || *projectID == b.ProjectID() {
+			builds = append(builds, ID)
+		}
 	}
 	return builds
 }

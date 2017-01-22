@@ -18,7 +18,7 @@ type App interface {
 	Config() Config
 	Projects() []string
 	Project(project string) (project.Project, error)
-	Builds() []string
+	Builds(projectID *string) []string
 	Build(build string) (build.Build, error)
 	Stdout(build string) ([]byte, error)
 	StageData(build string, stage string) ([]byte, error)
@@ -47,8 +47,8 @@ func (a defaultApp) Project(project string) (project.Project, error) {
 	return a.projects.Project(project)
 }
 
-func (a defaultApp) Builds() []string {
-	return a.builds.Builds()
+func (a defaultApp) Builds(projectID *string) []string {
+	return a.builds.Builds(projectID)
 }
 
 func (a defaultApp) Build(build string) (build.Build, error) {
