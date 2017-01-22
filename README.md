@@ -43,6 +43,8 @@ curl http://localhost:8080/v1/projects
 curl -d '' http://localhost:8080/v1/projects/<projectid>/trigger
 ```
 
+    Now you should be good to go!
+
 ## Configuration
 
 Getting there...
@@ -68,6 +70,7 @@ Build finishes when the script finishes. If the script exits with status code 0,
 
 `BUILDER_TOKEN` may be set and it can be used to access privileged operations such as server shutdown.
 
+`PATH` is a copy of `PATH` for builder server, prepended with the directory of builder executable. This way build script can just run `build add-stage my-stage` and so on to communicate with the server.
 
 ## TODO ideas
 - websocket
