@@ -12,7 +12,7 @@ echo Building
 make build
 
 echo Testing
-make test-v | builder add-stage test-results
+make test-v 2>&1 | builder add-stage test-results
 
 echo Deploying
 mv builder ~
