@@ -1,3 +1,4 @@
 /builder
 /version/version.json
 /version/version-data.go
+coverage.out

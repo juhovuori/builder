@@ -9,6 +9,9 @@ test-v:
 version:
 	go generate ./version
 
+coverage:
+	./scripts/coverage.sh
+
 build: version
 	go build
 

@@ -76,8 +76,11 @@ Build finishes when the script finishes. If the script exits with status code 0,
 - websocket
 - CLI
 - Better logging
+- stage data
+- stage subtypes
 - Migrations
 - Confirm thread safety
+- Configuration refresh during trigger
 - Notifications:
     - push notifications about build stage changes to other agents
     - github state api
@@ -89,7 +92,7 @@ Build finishes when the script finishes. If the script exits with status code 0,
     - build queues.
     - environment creation here instead of app
 - Query executors
-- Configuration refresh during trigger
+- ability to build without version-data
 - Tokens
     - build token
 - ProjectID instead of string, etc.
@@ -102,6 +105,7 @@ Build finishes when the script finishes. If the script exits with status code 0,
 
 - Basic web UI
 - Web UI plugins for displaying standard build stages such as go coverprofile
+- Web UI plugins for displaying repository related info
 
 - => docker
 - => nomad-dev-setup
