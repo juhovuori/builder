@@ -23,35 +23,20 @@ func (c *sqlContainer) Purge() error {
 
 func (c *sqlContainer) Init() error {
 	var err error
+	var migrationLevel int
 
 	if c.db, err = sql.Open("sqlite3", c.filename); err != nil {
 		return err
 	}
 
-	sqlStmt := `
-	create table if not exists builds (
-		id text not null primary key,
-		projectid text not null,
-		created int64 not null,
-		script text not null,
-		executortype text not null);
-	create table if not exists stages (
-		id integer not null primary key autoincrement,
-		build text not null,
-		type text not null,
-		timestamp int64 not null,
-		name text not null,
-		data text);
-	create table if not exists output (
-		id integer not null primary key autoincrement,
-		build text not null,
-		data text);
-	`
-	_, err = c.db.Exec(sqlStmt)
-	if err != nil {
-		log.Printf("%q: %s\n", err, sqlStmt)
-		return err
+	_ = c.db.QueryRow("select level from migrationlevel").Scan(&migrationLevel)
+
+	for i := migrationLevel + 1; i < len(migrations); i++ {
+		if err := c.applyMigration(i, migrations[i]); err != nil {
+			return err
+		}
 	}
+
 	return nil
 }
 
@@ -207,4 +192,53 @@ func (c *sqlContainer) Output(buildID string, output []byte) error {
 		return err
 	}
 	return nil
+}
+
+func (c sqlContainer) applyMigration(level int, migration string) error {
+	log.Printf("Applying migration %d: %s\n", level, migration)
+	tx, err := c.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	if _, err = tx.Exec(migration); err != nil {
+		log.Printf("%q: %s\n", err, migration)
+		return err
+	}
+	update := `update migrationlevel set level = ?`
+	stmt, err := tx.Prepare(update)
+	if err != nil {
+		return err
+	}
+	if _, err = stmt.Exec(level); err != nil {
+		log.Printf("%q: %s\n", err, update)
+		return err
+	}
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	return nil
+}
+
+var migrations = []string{
+	``, // initial migration level 0
+	`create table if not exists migrationlevel (level int64);`,
+	`insert into migrationlevel (level) values (1);`,
+	`create table if not exists builds (
+		id text not null primary key,
+		projectid text not null,
+		created int64 not null,
+		script text not null,
+		executortype text not null);`,
+	`create table if not exists stages (
+		id integer not null primary key autoincrement,
+		build text not null,
+		type text not null,
+		timestamp int64 not null,
+		name text not null,
+		data text);`,
+	`create table if not exists output (
+		id integer not null primary key autoincrement,
+		build text not null,
+		data text);`,
 }
