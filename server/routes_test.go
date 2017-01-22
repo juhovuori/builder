@@ -18,8 +18,8 @@ func TestRoutes(t *testing.T) {
 		code    int
 		body    string
 	}{
-		{server.hRoot, 200, "\"Hello, World!\""},
-		{server.hHealth, 500, "\"Not implemented.\""},
+		{server.hRoot, 200, "Builder"},
+		{server.hHealth, 200, "OK"},
 		//	{server.hVersion, 200, "\"xxx\""},
 	}
 
@@ -41,8 +41,8 @@ func TestRoutes(t *testing.T) {
 		if rec.Code != c.code {
 			t.Errorf("%d: Got code %d, expected %d", i, rec.Code, c.code)
 		}
-		if rec.Body.String() != c.body {
-			t.Errorf("%d: Got body %s, expected %s", i, rec.Body.String(), c.body)
+		if !strings.Contains(rec.Body.String(), c.body) {
+			t.Errorf("%d: Got body %s, expected to find %s", i, rec.Body.String(), c.body)
 		}
 	}
 }

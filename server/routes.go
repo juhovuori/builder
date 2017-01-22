@@ -10,11 +10,11 @@ import (
 )
 
 func (s *echoServer) hRoot(c echo.Context) error {
-	return c.JSON(http.StatusOK, "Hello, World!")
+	return c.JSON(http.StatusOK, root)
 }
 
 func (s *echoServer) hHealth(c echo.Context) error {
-	return c.JSON(http.StatusInternalServerError, "Not implemented.")
+	return c.JSON(http.StatusOK, "OK")
 }
 
 func (s *echoServer) hVersion(c echo.Context) error {
@@ -28,7 +28,7 @@ func (s *echoServer) hTriggerBuild(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	return c.JSON(http.StatusOK, b)
+	return c.JSON(http.StatusOK, restfulBuild(b))
 }
 
 func (s *echoServer) hCreateBuild(c echo.Context) error {
@@ -37,13 +37,21 @@ func (s *echoServer) hCreateBuild(c echo.Context) error {
 
 func (s *echoServer) hListBuilds(c echo.Context) error {
 	builds := s.app.Builds(nil)
-	return c.JSON(http.StatusOK, builds)
+	index, page, err := paging(c)
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, restfulItems(builds, "/v1/builds", index, page))
 }
 
 func (s *echoServer) hListProjectBuilds(c echo.Context) error {
 	projectID := c.Param("id")
 	builds := s.app.Builds(&projectID)
-	return c.JSON(http.StatusOK, builds)
+	index, page, err := paging(c)
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, restfulItems(builds, "/v1/builds", index, page))
 }
 
 func (s *echoServer) hGetBuild(c echo.Context) error {
@@ -52,7 +60,7 @@ func (s *echoServer) hGetBuild(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	return c.JSON(http.StatusOK, b)
+	return c.JSON(http.StatusOK, restfulBuild(b))
 }
 
 func (s *echoServer) hGetStageData(c echo.Context) error {
@@ -93,7 +101,11 @@ func (s *echoServer) hAddStage(c echo.Context) error {
 
 func (s *echoServer) hListProjects(c echo.Context) error {
 	projects := s.app.Projects()
-	return c.JSON(http.StatusOK, projects)
+	index, page, err := paging(c)
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, restfulItems(projects, "/v1/projects", index, page))
 }
 
 func (s *echoServer) hGetProject(c echo.Context) error {
@@ -102,7 +114,7 @@ func (s *echoServer) hGetProject(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	return c.JSON(http.StatusOK, p)
+	return c.JSON(http.StatusOK, restfulProject(p))
 }
 
 func (s *echoServer) hShutdown(c echo.Context) error {

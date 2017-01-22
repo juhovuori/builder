@@ -29,11 +29,11 @@ type Attributes interface {
 
 // defaultProject is the main implementation of Project
 type defaultProject struct {
-	Pid          string `json:"id"`
-	Perr         error  `json:"error"`
-	Pname        string `json:"name" hcl:"name"`
-	Pdescription string `json:"description" hcl:"description"`
-	Pscript      string `json:"script" hcl:"script"`
+	Pid          string
+	Perr         error
+	Pname        string `hcl:"name"`
+	Pdescription string `hcl:"description"`
+	Pscript      string `hcl:"script"`
 	configfile   string
 	url          string
 	vcs          string

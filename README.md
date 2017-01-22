@@ -73,20 +73,17 @@ Build finishes when the script finishes. If the script exits with status code 0,
 `PATH` is a copy of `PATH` for builder server, prepended with the directory of builder executable. This way build script can just run `build add-stage my-stage` and so on to communicate with the server.
 
 ## TODO ideas
-- websocket
-- CLI
+- stage ids / stage subtypes
+- thread safety issues
 - Better logging
-- stage ids
-- stage subtypes
-- Confirm thread safety
 - support project configuration in builder.hcl
 - Configuration refresh during trigger
+- websocket
 - Notifications:
     - push notifications about build stage changes to other agents
     - github state api
     - http
     - something else?
-- RESTify API. IDs => URLs, etc.
 - Execution managers
     - executor pools
     - build queues.

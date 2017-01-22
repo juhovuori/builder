@@ -30,12 +30,12 @@ type Build interface {
 }
 
 type defaultBuild struct {
-	BID           string  `json:"id"`
-	BProjectID    string  `json:"project-id"`
-	BScript       string  `json:"script"`
-	BExecutorType string  `json:"executor-type"`
-	BCreated      int64   `json:"created"`
-	Bstages       []Stage `json:"stages"`
+	BID           string
+	BProjectID    string
+	BScript       string
+	BExecutorType string
+	BCreated      int64
+	Bstages       []Stage
 	output        []byte
 }
 

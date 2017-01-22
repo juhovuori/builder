@@ -37,10 +37,10 @@ func (t StageType) Validate() error {
 
 // Stage is a build stage
 type Stage struct {
-	Type      StageType `json:"type"`
-	Timestamp int64     `json:"timestamp"`
-	Name      string    `json:"name"`
-	Data      []byte    `json:"-"`
+	Type      StageType
+	Timestamp int64
+	Name      string
+	Data      []byte
 }
 
 // ValidateWithPredecessor validates a stage together with its predecessor
