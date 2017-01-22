@@ -72,10 +72,9 @@ Build finishes when the script finishes. If the script exits with status code 0,
 ## TODO ideas
 - websocket
 - CLI
-- Tokens
-    - build token
 - Better logging
 - Migrations
+- Confirm thread safety
 - Notifications:
     - push notifications about build stage changes to other agents
     - github state api
@@ -88,8 +87,9 @@ Build finishes when the script finishes. If the script exits with status code 0,
     - environment creation here instead of app
 - Query executors
 - Configuration refresh during trigger
+- Tokens
+    - build token
 - ProjectID instead of string, etc.
-- Confirm thread safety
 
 - Organization manager
     - provides a web interface for creating organisations and running builder for each org
@@ -100,7 +100,5 @@ Build finishes when the script finishes. If the script exits with status code 0,
 - Basic web UI
 - Web UI plugins for displaying standard build stages such as go coverprofile
 
-- => prometheus
-- => grafana
 - => docker
 - => nomad-dev-setup
