@@ -61,12 +61,16 @@ func (s *echoServer) hGetStdout(c echo.Context) error {
 
 func (s *echoServer) hAddStage(c echo.Context) error {
 	buildID := c.Param("id")
+	data, err := ioutil.ReadAll(c.Request().Body)
+	if err != nil {
+		return err
+	}
 	stage := build.Stage{
 		Type: build.StageType(c.QueryParam("type")),
 		Name: c.QueryParam("name"),
+		Data: data,
 	}
-	err := s.app.AddStage(buildID, stage)
-	if err != nil {
+	if err = s.app.AddStage(buildID, stage); err != nil {
 		return err
 	}
 	return c.JSON(http.StatusOK, "OK")

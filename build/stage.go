@@ -40,7 +40,7 @@ type Stage struct {
 	Type      StageType `json:"type"`
 	Timestamp int64     `json:"timestamp"`
 	Name      string    `json:"name"`
-	Data      []byte
+	Data      []byte    `json:"-"`
 }
 
 // ValidateWithPredecessor validates a stage together with its predecessor
