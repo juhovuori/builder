@@ -6,7 +6,10 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"strings"
+
+	"github.com/juhovuori/builder/build"
 )
 
 // Client is a component that can interact with builder server
@@ -28,7 +31,8 @@ func (c httpClient) Shutdown(token string) error {
 		return err
 	}
 	if resp.StatusCode != 200 {
-		return fmt.Errorf("Server returned %d", resp.StatusCode)
+		body, _ := ioutil.ReadAll(resp.Body)
+		return fmt.Errorf("%d: %s", resp.StatusCode, string(body))
 	}
 	return nil
 }
@@ -40,7 +44,8 @@ func (c httpClient) Build(projectID string) (string, error) {
 		return "", err
 	}
 	if resp.StatusCode != 200 {
-		return "", fmt.Errorf("Server returned %d", resp.StatusCode)
+		body, _ := ioutil.ReadAll(resp.Body)
+		return "", fmt.Errorf("%d: %s", resp.StatusCode, string(body))
 	}
 	build, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -49,14 +54,15 @@ func (c httpClient) Build(projectID string) (string, error) {
 	return string(build), nil
 }
 
-func (c httpClient) AddStage(stage string, data io.Reader) error {
-	url := fmt.Sprintf("%s/v1/builds/%s", c.url, c.buildID)
+func (c httpClient) AddStage(name string, data io.Reader) error {
+	url := fmt.Sprintf("%s/v1/builds/%s?type=%s&name=%s", c.url, c.buildID, build.PROGRESS, url.QueryEscape(name))
 	resp, err := http.Post(url, "text/plain", data)
 	if err != nil {
 		return err
 	}
 	if resp.StatusCode != 200 {
-		return fmt.Errorf("Server returned %d", resp.StatusCode)
+		body, _ := ioutil.ReadAll(resp.Body)
+		return fmt.Errorf("%d: %s", resp.StatusCode, string(body))
 	}
 	return nil
 }

@@ -78,8 +78,8 @@ Build finishes when the script finishes. If the script exits with status code 0,
 - Better logging
 - stage data
 - stage subtypes
-- Migrations
 - Confirm thread safety
+- support project configuration in builder.hcl
 - Configuration refresh during trigger
 - Notifications:
     - push notifications about build stage changes to other agents
