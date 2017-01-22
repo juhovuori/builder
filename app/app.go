@@ -1,9 +1,7 @@
 package app
 
 import (
-	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"github.com/juhovuori/builder/build"
@@ -71,11 +69,8 @@ func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 	if err != nil {
 		return nil, err
 	}
-	env := []string{
-		fmt.Sprintf("BUILDER_BUILD_ID=%s", b.ID()),
-		fmt.Sprintf("BUILDER_URL=%s", a.cfg.URL),
-	}
-	e, err := exec.NewWithEnvironment(b, append(os.Environ(), env...))
+	env := createEnv(a.cfg.URL, b.ID())
+	e, err := exec.NewWithEnvironment(b, env)
 	if err != nil {
 		return nil, err
 	}
