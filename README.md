@@ -76,7 +76,7 @@ Build finishes when the script finishes. If the script exits with status code 0,
 - websocket
 - CLI
 - Better logging
-- stage data
+- stage ids
 - stage subtypes
 - Confirm thread safety
 - support project configuration in builder.hcl

@@ -2,6 +2,7 @@ package app
 
 import (
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/juhovuori/builder/build"
@@ -19,6 +20,8 @@ type App interface {
 	Project(project string) (project.Project, error)
 	Builds() []string
 	Build(build string) (build.Build, error)
+	Stdout(build string) ([]byte, error)
+	StageData(build string, stage string) ([]byte, error)
 	TriggerBuild(projectID string) (build.Build, error)
 	AddStage(buildID string, stage build.Stage) error
 	Version() version.Info
@@ -50,6 +53,26 @@ func (a defaultApp) Builds() []string {
 
 func (a defaultApp) Build(build string) (build.Build, error) {
 	return a.builds.Build(build)
+}
+
+func (a defaultApp) Stdout(buildID string) ([]byte, error) {
+	b, err := a.Build(buildID)
+	if err != nil {
+		return nil, err
+	}
+	return b.Stdout(), err
+}
+
+func (a defaultApp) StageData(buildID string, stage string) ([]byte, error) {
+	b, err := a.Build(buildID)
+	if err != nil {
+		return nil, err
+	}
+	i, err := strconv.Atoi(stage)
+	if err != nil {
+		return nil, err
+	}
+	return b.Stages()[i].Data, err
 }
 
 func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {

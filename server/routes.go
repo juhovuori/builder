@@ -49,14 +49,23 @@ func (s *echoServer) hGetBuild(c echo.Context) error {
 	return c.JSON(http.StatusOK, b)
 }
 
-func (s *echoServer) hGetStdout(c echo.Context) error {
+func (s *echoServer) hGetStageData(c echo.Context) error {
 	buildID := c.Param("id")
-	b, err := s.app.Build(buildID)
+	stage := c.Param("stage")
+	b, err := s.app.StageData(buildID, stage)
 	if err != nil {
 		return err
 	}
-	stdout := string(b.Stdout())
-	return c.String(http.StatusOK, stdout)
+	return c.String(http.StatusOK, string(b))
+}
+
+func (s *echoServer) hGetStdout(c echo.Context) error {
+	buildID := c.Param("id")
+	stdout, err := s.app.Stdout(buildID)
+	if err != nil {
+		return err
+	}
+	return c.String(http.StatusOK, string(stdout))
 }
 
 func (s *echoServer) hAddStage(c echo.Context) error {
