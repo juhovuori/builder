@@ -22,8 +22,13 @@ func TestContainer(t *testing.T) {
 		if c.err != nil {
 			continue
 		}
-		err = container.Init(true)
-		if err != nil {
+
+		if err = container.Purge(); err != nil {
+			t.Error("Cannot purge container")
+			continue
+		}
+
+		if err = container.Init(); err != nil {
 			t.Error("Cannot initialize container")
 			continue
 		}

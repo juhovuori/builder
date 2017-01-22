@@ -13,19 +13,21 @@ type sqlContainer struct {
 	filename string
 }
 
-func (c *sqlContainer) Init(purge bool) error {
-	var err error
-	if c.filename == "" {
-		c.filename = "/tmp/builder.db"
-	}
-	if purge {
-		os.Remove(c.filename)
-	}
-
-	c.db, err = sql.Open("sqlite3", c.filename)
-	if err != nil {
+func (c *sqlContainer) Purge() error {
+	err := os.Remove(c.filename)
+	if err != nil && os.IsNotExist(err) {
 		return err
 	}
+	return nil
+}
+
+func (c *sqlContainer) Init() error {
+	var err error
+
+	if c.db, err = sql.Open("sqlite3", c.filename); err != nil {
+		return err
+	}
+
 	sqlStmt := `
 	create table if not exists builds (
 		id text not null primary key,

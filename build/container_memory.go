@@ -4,7 +4,11 @@ type memoryContainer struct {
 	builds map[string]Build
 }
 
-func (c memoryContainer) Init(purge bool) error {
+func (c memoryContainer) Purge() error {
+	return nil
+}
+
+func (c memoryContainer) Init() error {
 	return nil
 }
 

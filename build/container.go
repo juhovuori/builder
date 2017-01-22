@@ -4,8 +4,9 @@ import "strings"
 
 // Container is the container for builds
 type Container interface {
-	Init(purge bool) error
+	Init() error
 	Close() error
+	Purge() error
 	Builds() []string
 	Build(ID string) (Build, error)
 	New(b Buildable) (Build, error)
@@ -26,10 +27,13 @@ func NewContainer(desc string) (Container, error) {
 	case "memory":
 		c = memoryContainer{map[string]Build{}}
 	case "sqlite":
+		if cfg == "" {
+			cfg = "/tmp/builder.db"
+		}
 		c = &sqlContainer{filename: cfg}
 	default:
 		return nil, ErrContainerType
 	}
-	err := c.Init(false)
+	err := c.Init()
 	return c, err
 }
