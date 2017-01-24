@@ -76,6 +76,12 @@ Build finishes when the script finishes. If the script exits with status code 0,
 `PATH` is a copy of `PATH` for builder server, prepended with the directory of builder executable. This way build script can just run `build add-stage my-stage` and so on to communicate with the server.
 
 ## TODO ideas
+- Build decision making:
+    - store repository version in each build.
+    - trigger => git pull
+    - monitor repo dir and on change (or builder startup)
+        => search for a build with current repo version, if not found start a build.
+    - create build forces a new build
 - websocket
 - CLI
 - Better logging

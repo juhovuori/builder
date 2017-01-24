@@ -25,13 +25,13 @@ func TestForkExecutor(t *testing.T) {
 		e := forkExecutor{dir, c.script, []string{}, []string{}}
 		stdout := make(chan []byte)
 
-		go func() {
-			for data := range stdout {
-				if string(data) != c.output {
-					t.Errorf("%d: output %s, expected %s\n", i, string(data), c.output)
+		go func(output <-chan []byte, expected string) {
+			for data := range output {
+				if string(data) != expected {
+					t.Errorf("%d: output %s, expected %s\n", i, string(data), expected)
 				}
 			}
-		}()
+		}(stdout, c.output)
 
 		data, err := ioutil.ReadFile(c.script)
 		if err != nil {
