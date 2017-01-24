@@ -3,10 +3,13 @@
 export GOPATH=$(pwd)
 PATH=$GOPATH/bin:$PATH
 
-echo Downloading sources
-go get github.com/jteeuwen/go-bindata/...
-go get -d github.com/juhovuori/builder
+echo Cloning
+builder clone src/github.com/juhovuori/builder
 cd src/github.com/juhovuori/builder
+
+echo Downloading dependencies
+go get github.com/jteeuwen/go-bindata/...
+go get -d ./...
 
 echo Building
 make build
