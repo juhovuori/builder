@@ -8,6 +8,7 @@ type Repository interface {
 	Type() Type
 	URL() string
 	File(filename string) ([]byte, error)
+	Clone(dst string) error
 	Update() error
 	Init() error
 	Cleanup() error

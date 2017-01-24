@@ -64,11 +64,14 @@ The `builder` executable is guaranteed to be in path for the script, so that can
 Build finishes when the script finishes. If the script exits with status code 0, the build is considered a success. Otherwise its considered a failure.
 
 ### Environment
-`BUILDER_URL` is the URL of builder server. This is used by builder client transparently.
 
 `BUILDER_BUILD_ID` is the id of current build.
 
-`BUILDER_TOKEN` may be set and it can be used to access privileged operations such as server shutdown.
+`BUILDER_REPOSITORY` is the local copy of the repository. This is used by `builder clone`. Do not mess with this directly! Fork executor would allow you to do so, but that will most deifinitely cause you trouble.
+
+`BUILDER_REPOSITORY_TYPE` is the type of local repository
+
+`BUILDER_URL` is the URL of builder server. This is used by builder client transparently.
 
 `PATH` is a copy of `PATH` for builder server, prepended with the directory of builder executable. This way build script can just run `build add-stage my-stage` and so on to communicate with the server.
 

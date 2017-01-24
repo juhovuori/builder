@@ -9,6 +9,10 @@ func (r *nopRepository) Type() Type {
 	return nop
 }
 
+func (r *nopRepository) Clone(dst string) error {
+	return nil
+}
+
 func (r *nopRepository) URL() string {
 	return r.url
 }

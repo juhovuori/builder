@@ -17,6 +17,13 @@ func (r *gitRepository) Type() Type {
 	return git
 }
 
+func (r *gitRepository) Clone(dst string) error {
+	cmd := exec.Command("git", "clone", r.dir, dst)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
+}
+
 func (r *gitRepository) URL() string {
 	return r.url
 }
