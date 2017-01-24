@@ -92,7 +92,7 @@ func (a defaultApp) TriggerBuild(projectID string) (build.Build, error) {
 	if err != nil {
 		return nil, err
 	}
-	env := createEnv(a.cfg.URL, b.ID())
+	env := createEnv(repository, a.cfg.URL, b.ID())
 	e, err := exec.NewWithEnvironment(b, env)
 	if err != nil {
 		return nil, err

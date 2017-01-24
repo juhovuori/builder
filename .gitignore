@@ -1,3 +1,4 @@
+/builder-local.hcl
 /builder
 /version/version.json
 /version/version-data.go
